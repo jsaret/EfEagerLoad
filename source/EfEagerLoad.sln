@@ -13,6 +13,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Tests", "Core\E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.ConsoleTester", "Tests\EfEagerLoad.ConsoleTester\EfEagerLoad.ConsoleTester.csproj", "{AE280F40-39A0-4352-AC72-E4B61898A984}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{769D7A38-D520-430C-B689-463064BCA3E5}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\README.md = ..\docs\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{DE2BFEAD-84E6-45F0-AFF4-BF79DFD953C6}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		..\docs\README.md = ..\docs\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +50,7 @@ Global
 		{68FDED66-92F9-4410-B1A8-FFE4F9DE9705} = {6D43E567-F935-41FF-94FA-241E9B585BCA}
 		{595C6058-84C7-4D44-AEDF-C0567B1CEF63} = {6D43E567-F935-41FF-94FA-241E9B585BCA}
 		{AE280F40-39A0-4352-AC72-E4B61898A984} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
+		{769D7A38-D520-430C-B689-463064BCA3E5} = {DE2BFEAD-84E6-45F0-AFF4-BF79DFD953C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D04A5152-78E1-4E33-B5EE-7871CF3724FF}

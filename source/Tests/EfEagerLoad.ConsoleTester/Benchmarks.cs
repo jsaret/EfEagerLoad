@@ -16,8 +16,8 @@ namespace EfEagerLoad.ConsoleTester
         [Benchmark(Baseline = true)]
         public void OldCode()
         {
-            //var bookQuery = new Book[0].AsQueryable();
-            //bookQuery = bookQuery.OldLoadRelated(true);
+            var bookQuery = new Book[0].AsQueryable();
+            bookQuery = bookQuery.EagerLoad(_testDbContext, true, "Test");
         }
 
         [Benchmark]

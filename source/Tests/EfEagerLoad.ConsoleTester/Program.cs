@@ -23,7 +23,7 @@ namespace EfEagerLoad.ConsoleTester
             var serviceProvider = await SetupServices();
             var testRunner = serviceProvider.GetRequiredService<TestRunner>();
             //var summary = BenchmarkRunner.Run<Benchmarks>();
-            await testRunner.RunTest2();
+            await testRunner.RunTest1();
         }
 
         public static async Task<IServiceProvider> SetupServices()

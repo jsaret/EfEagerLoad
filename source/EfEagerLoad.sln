@@ -11,18 +11,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad", "Core\EfEager
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Tests", "Core\EfEagerLoad.Tests\EfEagerLoad.Tests.csproj", "{595C6058-84C7-4D44-AEDF-C0567B1CEF63}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.ConsoleTester", "Tests\EfEagerLoad.ConsoleTester\EfEagerLoad.ConsoleTester.csproj", "{AE280F40-39A0-4352-AC72-E4B61898A984}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.ConsoleTester", "Testing\EfEagerLoad.ConsoleTester\EfEagerLoad.ConsoleTester.csproj", "{AE280F40-39A0-4352-AC72-E4B61898A984}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{769D7A38-D520-430C-B689-463064BCA3E5}"
 	ProjectSection(SolutionItems) = preProject
 		..\docs\README.md = ..\docs\README.md
+		..\docs\ToDo.md = ..\docs\ToDo.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{DE2BFEAD-84E6-45F0-AFF4-BF79DFD953C6}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		..\docs\README.md = ..\docs\README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Benchmarks", "Testing\EfEagerLoad.Benchmarks\EfEagerLoad.Benchmarks.csproj", "{D158F3D3-B620-4F45-8209-14029C09AB25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EfEagerLoad.Testing", "Testing\EfEagerLoad.Testing\EfEagerLoad.Testing.csproj", "{B328E249-C343-45CC-8D96-91AE71FD10DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +46,14 @@ Global
 		{AE280F40-39A0-4352-AC72-E4B61898A984}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE280F40-39A0-4352-AC72-E4B61898A984}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE280F40-39A0-4352-AC72-E4B61898A984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D158F3D3-B620-4F45-8209-14029C09AB25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D158F3D3-B620-4F45-8209-14029C09AB25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D158F3D3-B620-4F45-8209-14029C09AB25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D158F3D3-B620-4F45-8209-14029C09AB25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,6 +63,8 @@ Global
 		{595C6058-84C7-4D44-AEDF-C0567B1CEF63} = {6D43E567-F935-41FF-94FA-241E9B585BCA}
 		{AE280F40-39A0-4352-AC72-E4B61898A984} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
 		{769D7A38-D520-430C-B689-463064BCA3E5} = {DE2BFEAD-84E6-45F0-AFF4-BF79DFD953C6}
+		{D158F3D3-B620-4F45-8209-14029C09AB25} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
+		{B328E249-C343-45CC-8D96-91AE71FD10DB} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D04A5152-78E1-4E33-B5EE-7871CF3724FF}

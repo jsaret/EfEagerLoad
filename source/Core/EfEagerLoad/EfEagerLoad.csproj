@@ -2,6 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <Version>0.1.0</Version>
+    <Description>Eager Loading for Entity Framework Core</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/jsaret/EfEagerLoad</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jsaret/EfEagerLoad</RepositoryUrl>
+    <PackageLicenseFile></PackageLicenseFile>
+    <Copyright>Justin Saretzki (2020)</Copyright>
+    <PackageTags>"Entity Framework Core"</PackageTags>
+    <RepositoryType>GIT</RepositoryType>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>EfEagerLoad.pfx</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,33 +1,46 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using EfEagerLoad.Attributes;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore;
 
 namespace EfEagerLoad.Internal
 {
     internal static class EagerLoadAttributeFunctions
     {
-        public static Func<EfEagerLoadContext, INavigation, bool> PredicateForEagerLoadAttribute = (context, navigation) =>
+        public static Predicate<EfEagerLoadContext> PredicateForEagerLoadAttribute = (context) =>
             {
-                var eagerLoadAttribute = Attribute.GetCustomAttributes(navigation.PropertyInfo, typeof(EagerLoadAttribute))
-                                                .OfType<EagerLoadAttribute>().FirstOrDefault();
+                if (context.CurrentNavigation == null) { return true; }
 
-                if (context.TypesVisited.Contains(context.CurrentNavigation?.ClrType)) { return false; }
+                var eagerLoadAttribute = Attribute.GetCustomAttributes(context.CurrentNavigation.PropertyInfo, typeof(EagerLoadAttribute))
+                                                                            .OfType<EagerLoadAttribute>().FirstOrDefault();
 
-                if (context.CurrentNavigation?.ClrType == context.RootType && context.TypesVisited.Where(type => type == context.CurrentNavigation.ClrType)
-                                                                                                            .Skip(1).Any())
-                {
-                    return false;
-                }
+                if (eagerLoadAttribute == null) { return false; }
 
-                if (eagerLoadAttribute == null)  { return false; }
+                if (eagerLoadAttribute.OnlyIfOnRoot && context.CurrentNavigation.DeclaringType.ClrType != context.RootType) { return false; }
 
-                if (eagerLoadAttribute.OnlyIfOnRoot && navigation.DeclaringType.ClrType != context.RootType) { return false; }
+                if (eagerLoadAttribute.NotIfOnRoot && context.CurrentNavigation.DeclaringType.ClrType == context.RootType) { return false; }
 
-                if (eagerLoadAttribute.NotIfOnRoot && navigation.DeclaringType.ClrType == context.RootType) { return false; }
-
+                if (!CanTypeBeLazyLoadedBasedOnAllowedLimit(context, eagerLoadAttribute)) { return false; }
+                
                 return true;
             };
-        
+
+        private static bool CanTypeBeLazyLoadedBasedOnAllowedLimit(EfEagerLoadContext context, EagerLoadAttribute eagerLoadAttribute)
+        {
+            if (context.TypesVisited.Count == 1) { return true; }
+
+            var currentType = typeof(IEnumerable).IsAssignableFrom(context.CurrentNavigation?.ClrType) ? context.CurrentNavigation?.GetTargetType().ClrType :
+                                                                context.CurrentNavigation?.ClrType;
+
+            if (currentType == null) { return false; }
+
+            if (currentType == context.RootType)
+            {
+                return !context.TypesVisited.Where(type => type == currentType).Skip(eagerLoadAttribute.AllowedVisitsForRootType).Any();
+            }
+
+            return !context.TypesVisited.Where(type => type == currentType).Skip(eagerLoadAttribute.AllowedVisitsForType).Any();
+        }
     }
 }

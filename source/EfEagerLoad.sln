@@ -15,6 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.ConsoleTester",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{769D7A38-D520-430C-B689-463064BCA3E5}"
 	ProjectSection(SolutionItems) = preProject
+		..\docs\CONTRIBUTING.md = ..\docs\CONTRIBUTING.md
 		..\docs\README.md = ..\docs\README.md
 		..\docs\ToDo.md = ..\docs\ToDo.md
 	EndProjectSection
@@ -26,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Benchmarks", "Testing\EfEagerLoad.Benchmarks\EfEagerLoad.Benchmarks.csproj", "{D158F3D3-B620-4F45-8209-14029C09AB25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EfEagerLoad.Testing", "Testing\EfEagerLoad.Testing\EfEagerLoad.Testing.csproj", "{B328E249-C343-45CC-8D96-91AE71FD10DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Testing", "Testing\EfEagerLoad.Testing\EfEagerLoad.Testing.csproj", "{B328E249-C343-45CC-8D96-91AE71FD10DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

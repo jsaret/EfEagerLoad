@@ -33,14 +33,12 @@ namespace EfEagerLoad.Internal
                         Func<IQueryable<TEntity>, IQueryable<TEntity>> originalFunction, EfEagerLoadContext eagerLoadContext) 
             where TEntity : class
         {
-            var navigationProperties = eagerLoadContext.DbContext.Model.FindEntityType(type).GetNavigations()
-                                        .Where(currentNavigation => eagerLoadContext.ShouldIncludeNavigation(eagerLoadContext, currentNavigation)).ToArray();
+            eagerLoadContext.AddTypeVisited(type);
 
-            if (navigationProperties.Length == 0) { return originalFunction; }
+            var navigationProperties = eagerLoadContext.DbContext.Model.FindEntityType(type).GetNavigations()
+                                        .Where(currentNavigation => eagerLoadContext.ShouldIncludeNavigation(eagerLoadContext));
 
             var resultingFunction = originalFunction;
-
-            eagerLoadContext.TypesVisited.Add(type);
 
             resultingFunction = ComposeIncludeFunctionsForNavigationProperties(prefix, navigationProperties, resultingFunction, eagerLoadContext);
             
@@ -49,9 +47,11 @@ namespace EfEagerLoad.Internal
 
         private static Func<IQueryable<TEntity>, IQueryable<TEntity>> ComposeIncludeFunctionsForNavigationProperties<TEntity>(
                                                                 string prefix, IEnumerable<INavigation> navigationProperties, 
-                                                                Func<IQueryable<TEntity>, IQueryable<TEntity>> resultingFunction,
+                                                                Func<IQueryable<TEntity>, IQueryable<TEntity>> outerFunction,
                                                                 EfEagerLoadContext eagerLoadContext) where TEntity : class
         {
+            var resultingFunction = outerFunction;
+
             foreach (var navigationProperty in navigationProperties)
             {
                 var navigationName = $"{prefix}{navigationProperty.Name}";

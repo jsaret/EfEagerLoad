@@ -9,9 +9,10 @@ namespace EfEagerLoad
     public class EfEagerLoadContext
     {
         private readonly Stack<INavigation> _navigationTreeStack = new Stack<INavigation>();
+        private readonly List<Type> _typesVisited = new List<Type>();
 
-        public EfEagerLoadContext(Type rootType, DbContext dbContext, IList<string> navigationPropertiesToIgnore,
-                                    Func<EfEagerLoadContext, INavigation, bool> shouldIncludeNavigation)
+        public EfEagerLoadContext(Type rootType, DbContext dbContext, IList<string> navigationPropertiesToIgnore, 
+                                Predicate<EfEagerLoadContext> shouldIncludeNavigation)
         {
             Guard.IsNotNull(nameof(rootType), rootType);
             Guard.IsNotNull(nameof(dbContext), dbContext);
@@ -34,9 +35,11 @@ namespace EfEagerLoad
 
         public IList<string> NavigationPropertiesToIgnore { get; }
 
-        public IList<Type> TypesVisited { get; } = new List<Type>();
+        public IReadOnlyList<Type> TypesVisited => _typesVisited;
 
-        public Func<EfEagerLoadContext, INavigation, bool> ShouldIncludeNavigation { get; set; }
+        public Predicate<EfEagerLoadContext> ShouldIncludeNavigation { get; set; }
+
+        public void AddTypeVisited(Type visitedType) => _typesVisited.Add(visitedType);
 
         internal void SetCurrentNavigation(INavigation navigation)
         {

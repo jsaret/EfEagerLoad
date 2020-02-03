@@ -26,6 +26,9 @@ namespace EfEagerLoad.ConsoleTester
             //await testRunner.RunTest2();
             //await testRunner.RunTest3();
             await testRunner.RunTest4();
+
+            //await testRunner.RunTest5();
+            //await testRunner.RunTest6();
         }
 
         private static async Task<IServiceProvider> SetupServices()

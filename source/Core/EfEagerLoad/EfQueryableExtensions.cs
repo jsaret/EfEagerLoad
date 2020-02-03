@@ -3,7 +3,6 @@ using System.Linq;
 using EfEagerLoad.Common;
 using EfEagerLoad.Internal;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfEagerLoad
 {
@@ -27,7 +26,7 @@ namespace EfEagerLoad
         }
 
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext,
-                                        Func<EfEagerLoadContext, INavigation, bool> navigationMatchPredicate) where TEntity : class
+                                                                    Predicate<EfEagerLoadContext> navigationMatchPredicate) where TEntity : class
         {
             return originalQuery.EagerLoadMatching(dbContext, true, navigationMatchPredicate);
         }
@@ -52,7 +51,7 @@ namespace EfEagerLoad
         }
 
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext,
-                            Func<EfEagerLoadContext, INavigation, bool> shouldIncludeNavigationPredicate, params string[] ignoredNavigationProperties) 
+                            Predicate<EfEagerLoadContext> shouldIncludeNavigationPredicate, params string[] ignoredNavigationProperties) 
                             where TEntity : class
         {
             return originalQuery.EagerLoadMatching(dbContext, true, shouldIncludeNavigationPredicate, ignoredNavigationProperties);
@@ -70,20 +69,20 @@ namespace EfEagerLoad
                                                         where TEntity : class
                                                         where TAttribute : Attribute
         {
-            return originalQuery.EagerLoadMatching(dbContext, eagerLoad, 
-                                    (context, nav) => Attribute.IsDefined(nav.PropertyInfo, typeof(TAttribute)), navigationPropertiesToIgnore);
+            return originalQuery.EagerLoadMatching(dbContext, eagerLoad, (context) => context.CurrentNavigation?.PropertyInfo != null && 
+                                        Attribute.IsDefined(context.CurrentNavigation.PropertyInfo, typeof(TAttribute)), navigationPropertiesToIgnore);
         }
 
         public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, bool eagerLoad, 
                                                                 params string[] navigationPropertiesToIgnore) where TEntity : class
         {
-            return originalQuery.EagerLoadMatching(dbContext, eagerLoad, (context, nav) => true, navigationPropertiesToIgnore);
+            return originalQuery.EagerLoadMatching(dbContext, eagerLoad, (context) => true, navigationPropertiesToIgnore);
         }
 
 
 
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, bool eagerLoad,
-                                Func<EfEagerLoadContext, INavigation, bool> shouldIncludeNavigationPredicate, params string[] navigationPropertiesToIgnore) 
+                                Predicate<EfEagerLoadContext> shouldIncludeNavigationPredicate, params string[] navigationPropertiesToIgnore) 
                                 where TEntity : class
         {
             if (!eagerLoad) { return originalQuery; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EfEagerLoad.ConsoleTester.Logging;
 using EfEagerLoad.Testing.Extensions;
@@ -93,6 +94,22 @@ namespace EfEagerLoad.ConsoleTester
 
             Console.WriteLine("_______________ Finished Test Run _______________");
             _logger.LogError($"Commands: {ConsoleLogger.CommandCounter}");
+        }
+
+        public async Task<object> RunTest5()
+        {
+            _logger.LogInformation("___________________________ Starting ___________________________");
+
+            return _repository.Query<Book>().Include(book => book.Author).ThenInclude(author => author.Books)
+                .Include(book => book.Category)
+                .Include(book => book.Publisher).ToList();
+        }
+
+        public async Task<object> RunTest6()
+        {
+            _logger.LogInformation("___________________________ Starting ___________________________");
+
+            return await _repository.GetAll<Book>();
         }
     }
 }

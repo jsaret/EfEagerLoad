@@ -50,14 +50,20 @@ ___
 
 #### Controlling what gets Eager Loaded:
 
-##### Custom Attribute:
 
 ##### Built-in Attribute:
+
+
+
+    public class EntityFrameworkRepository : IRepository
+
+
+##### Custom Attribute:
 
 ##### Custom Filter:
 ___
 
-#### Advanced EagerLoadAttribute:
+#### EagerLoadAttribute Usage:
 
 The **EagerLoadAttribute** can be configured with various settings that can modify the way the EfEagerLoad library builds the Include functions at runtime.
 

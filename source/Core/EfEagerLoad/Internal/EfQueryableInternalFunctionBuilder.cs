@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfEagerLoad.Internal
 {
-    public static class InternalEfQueryableHelper
+    public static class EfQueryableInternalFunctionBuilder
     {
         private static readonly ConcurrentDictionary<Type, object> IncludeFunctions = new ConcurrentDictionary<Type, object>();
         
@@ -24,8 +24,8 @@ namespace EfEagerLoad.Internal
                 });
             }
 
-            IQueryable<TEntity> ResultFunction(IQueryable<TEntity> queryable) => queryable;
-            return ComposeFunctionForIncludesForType(typeof(TEntity), string.Empty, (Func<IQueryable<TEntity>, IQueryable<TEntity>>)ResultFunction, 
+            static IQueryable<TEntity> ResultFunction(IQueryable<TEntity> queryable) => queryable;
+            return ComposeFunctionForIncludesForType(typeof(TEntity), string.Empty, (Func<IQueryable<TEntity>, IQueryable<TEntity>>) ResultFunction, 
                                                     eagerLoadContext);
         }
 
@@ -33,18 +33,17 @@ namespace EfEagerLoad.Internal
                         Func<IQueryable<TEntity>, IQueryable<TEntity>> originalFunction, EfEagerLoadContext eagerLoadContext) 
             where TEntity : class
         {
-            if (!eagerLoadContext.ShouldIncludeTypePredicate(eagerLoadContext, type)) { return originalFunction; }
-            eagerLoadContext.TypesVisited.Add(type);
-
             var navigationProperties = eagerLoadContext.DbContext.Model.FindEntityType(type).GetNavigations()
-                                        .Where(nav => eagerLoadContext.ShouldIncludeNavigationPredicate(eagerLoadContext, nav)).ToArray();
+                                        .Where(currentNavigation => eagerLoadContext.ShouldIncludeNavigation(eagerLoadContext, currentNavigation)).ToArray();
 
-            if (!navigationProperties.Any()) { return originalFunction; }
+            if (navigationProperties.Length == 0) { return originalFunction; }
 
             var resultingFunction = originalFunction;
 
-            resultingFunction = ComposeIncludeFunctionsForNavigationProperties(prefix, navigationProperties, resultingFunction, eagerLoadContext);
+            eagerLoadContext.TypesVisited.Add(type);
 
+            resultingFunction = ComposeIncludeFunctionsForNavigationProperties(prefix, navigationProperties, resultingFunction, eagerLoadContext);
+            
             return resultingFunction;
         }
 
@@ -58,6 +57,8 @@ namespace EfEagerLoad.Internal
                 var navigationName = $"{prefix}{navigationProperty.Name}";
                 if (eagerLoadContext.NavigationPropertiesToIgnore.Contains(navigationName)){ continue; }
 
+                eagerLoadContext.SetCurrentNavigation(navigationProperty);
+
                 IQueryable<TEntity> ChainedIncludeFunc(IQueryable<TEntity> f) => f.Include(navigationName);
 
                 resultingFunction = JoinQueryFunctions(resultingFunction, ChainedIncludeFunc);
@@ -65,8 +66,9 @@ namespace EfEagerLoad.Internal
 
                 if (navigationProperty.IsCollection())
                 {
-                    var collectionTargetType = navigationProperty.GetTargetType().ClrType;
                     var newCollectionPrefix = $"{navigationName}.";
+                    var collectionTargetType = navigationProperty.GetTargetType().ClrType;
+
                     resultingFunction = ComposeFunctionForIncludesForType(collectionTargetType, newCollectionPrefix,
                                     resultingFunction, eagerLoadContext);
                     continue;
@@ -75,6 +77,8 @@ namespace EfEagerLoad.Internal
                 var targetType = navigationProperty.ClrType;
                 var newPrefix = $"{navigationName}.";
                 resultingFunction = ComposeFunctionForIncludesForType(targetType, newPrefix, resultingFunction, eagerLoadContext);
+
+                eagerLoadContext.RemoveCurrentNavigation();
             }
 
             return resultingFunction;

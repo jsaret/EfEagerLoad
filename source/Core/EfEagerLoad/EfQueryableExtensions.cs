@@ -52,17 +52,17 @@ namespace EfEagerLoad
         }
 
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext,
-                            Func<EfEagerLoadContext, INavigation, bool> navigationMatchPredicate, params string[] ignoredNavigationProperties) 
+                            Func<EfEagerLoadContext, INavigation, bool> shouldIncludeNavigationPredicate, params string[] ignoredNavigationProperties) 
                             where TEntity : class
         {
-            return originalQuery.EagerLoadMatching(dbContext, true, navigationMatchPredicate, ignoredNavigationProperties);
+            return originalQuery.EagerLoadMatching(dbContext, true, shouldIncludeNavigationPredicate, ignoredNavigationProperties);
         }
 
         public static IQueryable<TEntity> EagerLoad<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, bool eagerLoad,
                                                             params string[] navigationPropertiesToIgnore) where TEntity : class
         {
-            var shouldIncludeTypePredicate = EagerLoadAttributeFunctions.PredicateForEagerLoadAttribute;
-            return originalQuery.EagerLoadMatching(dbContext, eagerLoad, shouldIncludeTypePredicate, navigationPropertiesToIgnore);
+            var shouldIncludeNavigationPredicate = EagerLoadAttributeFunctions.PredicateForEagerLoadAttribute;
+            return originalQuery.EagerLoadMatching(dbContext, eagerLoad, shouldIncludeNavigationPredicate, navigationPropertiesToIgnore);
         }
 
         public static IQueryable<TEntity> EagerLoadMatchingAttribute<TEntity, TAttribute>(this IQueryable<TEntity> originalQuery, 
@@ -74,37 +74,26 @@ namespace EfEagerLoad
                                     (context, nav) => Attribute.IsDefined(nav.PropertyInfo, typeof(TAttribute)), navigationPropertiesToIgnore);
         }
 
-        public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> originalQuery,
-            DbContext dbContext, bool eagerLoad, params string[] navigationPropertiesToIgnore)
-            where TEntity : class
+        public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, bool eagerLoad, 
+                                                                params string[] navigationPropertiesToIgnore) where TEntity : class
         {
             return originalQuery.EagerLoadMatching(dbContext, eagerLoad, (context, nav) => true, navigationPropertiesToIgnore);
         }
 
+
+
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, bool eagerLoad,
-                                Func<EfEagerLoadContext, INavigation, bool> navigationMatchPredicate, params string[] navigationPropertiesToIgnore) 
+                                Func<EfEagerLoadContext, INavigation, bool> shouldIncludeNavigationPredicate, params string[] navigationPropertiesToIgnore) 
                                 where TEntity : class
-        {
-            static bool ShouldIncludeTypePredicate(EfEagerLoadContext context, Type type) => !context.TypesVisited.Contains(type);
-
-            return originalQuery.EagerLoadMatching(dbContext, eagerLoad, navigationMatchPredicate, ShouldIncludeTypePredicate, 
-                                                    navigationPropertiesToIgnore);
-        }
-
-
-        public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, 
-                                bool eagerLoad, Func<EfEagerLoadContext, INavigation, bool> navigationMatchPredicate, 
-                                Func<EfEagerLoadContext, Type, bool> shouldIncludeTypePredicate,  params string[] navigationPropertiesToIgnore)
-            where TEntity : class
         {
             if (!eagerLoad) { return originalQuery; }
 
             Guard.IsNotNull(nameof(originalQuery), originalQuery);
 
             var eagerLoadContext = new EfEagerLoadContext(typeof(TEntity), dbContext, (navigationPropertiesToIgnore ?? new string[0]).ToList(),
-                shouldIncludeTypePredicate, navigationMatchPredicate);
+                                                            shouldIncludeNavigationPredicate);
 
-            var includeFunction = InternalEfQueryableHelper.GetIncludeFunction<TEntity>(eagerLoadContext);
+            var includeFunction = EfQueryableInternalFunctionBuilder.GetIncludeFunction<TEntity>(eagerLoadContext);
             return includeFunction(originalQuery);
         }
 

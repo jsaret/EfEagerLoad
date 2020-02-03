@@ -14,8 +14,6 @@ namespace EfEagerLoad.Internal
         internal static Func<IQueryable<TEntity>, IQueryable<TEntity>> GetIncludeFunction<TEntity>(EfEagerLoadContext eagerLoadContext) 
                                                                                                     where TEntity : class
         {
-            //ToDO: Still need to include mechanism for having cached Func based on the ignoredNavigationProperties in addition to the type?
-            // (maybe even look into Predicate => Expression with matching)
             if (eagerLoadContext.NavigationPropertiesToIgnore.Count == 0)
             {
                 return (Func<IQueryable<TEntity>, IQueryable<TEntity>>) IncludeFunctions.GetOrAdd(typeof(TEntity), type =>

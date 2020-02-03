@@ -12,6 +12,14 @@ namespace EfEagerLoad.Internal
                 var eagerLoadAttribute = Attribute.GetCustomAttributes(navigation.PropertyInfo, typeof(EagerLoadAttribute))
                                                 .OfType<EagerLoadAttribute>().FirstOrDefault();
 
+                if (context.TypesVisited.Contains(context.CurrentNavigation?.ClrType)) { return false; }
+
+                if (context.CurrentNavigation?.ClrType == context.RootType && context.TypesVisited.Where(type => type == context.CurrentNavigation.ClrType)
+                                                                                                            .Skip(1).Any())
+                {
+                    return false;
+                }
+
                 if (eagerLoadAttribute == null)  { return false; }
 
                 if (eagerLoadAttribute.OnlyIfOnRoot && navigation.DeclaringType.ClrType != context.RootType) { return false; }

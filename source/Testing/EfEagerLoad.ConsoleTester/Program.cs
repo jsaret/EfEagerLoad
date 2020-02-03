@@ -22,10 +22,10 @@ namespace EfEagerLoad.ConsoleTester
             var serviceProvider = await SetupServices();
             var testRunner = serviceProvider.GetRequiredService<TestRunner>();
 
-            await testRunner.RunTest1();
-            await testRunner.RunTest2();
+            //await testRunner.RunTest1();
+            //await testRunner.RunTest2();
             //await testRunner.RunTest3();
-            //await testRunner.RunTest4();
+            await testRunner.RunTest4();
         }
 
         private static async Task<IServiceProvider> SetupServices()

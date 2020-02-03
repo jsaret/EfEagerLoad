@@ -8,32 +8,50 @@ namespace EfEagerLoad
 {
     public class EfEagerLoadContext
     {
+        private readonly Stack<INavigation> _navigationTreeStack = new Stack<INavigation>();
+
         public EfEagerLoadContext(Type rootType, DbContext dbContext, IList<string> navigationPropertiesToIgnore,
-                                Func<EfEagerLoadContext, Type, bool> shouldIncludeTypePredicate, 
-                                Func<EfEagerLoadContext, INavigation, bool> shouldIncludeNavigationPredicate)
+                                    Func<EfEagerLoadContext, INavigation, bool> shouldIncludeNavigation)
         {
             Guard.IsNotNull(nameof(rootType), rootType);
-            Guard.IsNotNull(nameof(dbContext), dbContext); 
-            Guard.IsNotNull(nameof(shouldIncludeTypePredicate), shouldIncludeTypePredicate);
-            Guard.IsNotNull(nameof(shouldIncludeNavigationPredicate), shouldIncludeNavigationPredicate);
+            Guard.IsNotNull(nameof(dbContext), dbContext);
+            Guard.IsNotNull(nameof(shouldIncludeNavigation), shouldIncludeNavigation);
 
             RootType = rootType;
             DbContext = dbContext;
             NavigationPropertiesToIgnore = navigationPropertiesToIgnore ?? new List<string>();
-            ShouldIncludeTypePredicate = shouldIncludeTypePredicate;
-            ShouldIncludeNavigationPredicate = shouldIncludeNavigationPredicate;
+            ShouldIncludeNavigation = shouldIncludeNavigation;
         }
 
-        public Type RootType { get; set; }
+        public Type RootType { get; }
 
-        public DbContext DbContext { get; set; }
 
-        public IList<string> NavigationPropertiesToIgnore { get; set; }
+        public INavigation CurrentNavigation { get; private set; }
+
+        public IReadOnlyList<INavigation> NavigationTree => _navigationTreeStack.ToArray();
+
+        public DbContext DbContext { get; }
+
+        public IList<string> NavigationPropertiesToIgnore { get; }
 
         public IList<Type> TypesVisited { get; } = new List<Type>();
 
-        public Func<EfEagerLoadContext, Type, bool> ShouldIncludeTypePredicate { get; set; }
+        public Func<EfEagerLoadContext, INavigation, bool> ShouldIncludeNavigation { get; set; }
 
-        public Func<EfEagerLoadContext, INavigation, bool> ShouldIncludeNavigationPredicate { get; set; }
+        internal void SetCurrentNavigation(INavigation navigation)
+        {
+            CurrentNavigation = navigation;
+            _navigationTreeStack.Push(navigation);
+        }
+
+        internal INavigation RemoveCurrentNavigation()
+        {
+            if (_navigationTreeStack.Count == 0) { return null; }
+            
+            var currentNavigationToRemove = _navigationTreeStack.Pop();
+            CurrentNavigation = (_navigationTreeStack.Count > 0) ? _navigationTreeStack.Peek() : null;
+            return currentNavigationToRemove;
+
+        }
     }
 }

@@ -11,10 +11,10 @@
     <RepositoryUrl>https://github.com/jsaret/EfEagerLoad</RepositoryUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Copyright>Justin Saret (2020)</Copyright>
-    <PackageTags>"Entity Framework Core"</PackageTags>
+    <PackageTags>EntityFrameworkCore Eager Load</PackageTags>
     <RepositoryType>GIT</RepositoryType>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>EfEagerLoad.pfx</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>EfEagerLoadSigningKey.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <Authors>Justin Saret</Authors>
     <Company>EfEagerLoad</Company>
@@ -29,6 +29,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Extensions\" />
   </ItemGroup>
 
 </Project>

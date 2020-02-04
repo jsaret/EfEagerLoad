@@ -3,22 +3,23 @@
 namespace EfEagerLoad.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class EagerLoadAttribute : Attribute
+    public class EagerLoadAttribute : System.Attribute
     {
-        public EagerLoadAttribute(bool onlyIfOnRoot = false, bool notIfOnRoot = false, int allowedVisitsForType = 2, int allowedVisitsForRootType = 2)
+        public EagerLoadAttribute(bool onlyIfOnRoot = false, bool notIfOnRoot = false, int maxVisitsForType = 2, int maxVisitsForRootType = 2, 
+                                    int maxDepth = 5)
         {
             OnlyIfOnRoot = onlyIfOnRoot;
             NotIfOnRoot = notIfOnRoot;
-            AllowedVisitsForType = allowedVisitsForType;
-            AllowedVisitsForRootType = allowedVisitsForRootType;
+            MaxVisitsForType = maxVisitsForType;
+            MaxVisitsForRootType = maxVisitsForRootType;
         }
 
         public bool OnlyIfOnRoot { get; }
 
         public bool NotIfOnRoot { get; }
 
-        public int AllowedVisitsForType { get; }
+        public int MaxVisitsForType { get; }
 
-        public int AllowedVisitsForRootType { get; }
+        public int MaxVisitsForRootType { get; }
     }
 }

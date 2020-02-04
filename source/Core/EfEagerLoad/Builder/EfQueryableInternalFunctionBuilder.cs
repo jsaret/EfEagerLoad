@@ -5,13 +5,13 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EfEagerLoad.Internal
+namespace EfEagerLoad.Builder
 {
     public static class EfQueryableInternalFunctionBuilder
     {
         private static readonly ConcurrentDictionary<Type, object> IncludeFunctions = new ConcurrentDictionary<Type, object>();
         
-        internal static Func<IQueryable<TEntity>, IQueryable<TEntity>> GetIncludeFunction<TEntity>(EfEagerLoadContext eagerLoadContext) 
+        internal static Func<IQueryable<TEntity>, IQueryable<TEntity>> GetIncludeFunction<TEntity>(EagerLoadContext eagerLoadContext) 
                                                                                                     where TEntity : class
         {
             if (eagerLoadContext.NavigationPropertiesToIgnore.Count == 0)
@@ -30,13 +30,13 @@ namespace EfEagerLoad.Internal
         }
 
         private static Func<IQueryable<TEntity>, IQueryable<TEntity>> ComposeFunctionForIncludesForType<TEntity>(Type type, string prefix,
-                        Func<IQueryable<TEntity>, IQueryable<TEntity>> originalFunction, EfEagerLoadContext eagerLoadContext) 
+                        Func<IQueryable<TEntity>, IQueryable<TEntity>> originalFunction, EagerLoadContext eagerLoadContext) 
             where TEntity : class
         {
             eagerLoadContext.AddTypeVisited(type);
 
             var navigationProperties = eagerLoadContext.DbContext.Model.FindEntityType(type).GetNavigations()
-                                        .Where(currentNavigation => eagerLoadContext.ShouldIncludeNavigation(eagerLoadContext));
+                                        .Where(currentNavigation => eagerLoadContext.IncludeStrategy.ShouldIncludeNavigation(eagerLoadContext));
 
             var resultingFunction = originalFunction;
 
@@ -48,7 +48,7 @@ namespace EfEagerLoad.Internal
         private static Func<IQueryable<TEntity>, IQueryable<TEntity>> ComposeIncludeFunctionsForNavigationProperties<TEntity>(
                                                                 string prefix, IEnumerable<INavigation> navigationProperties, 
                                                                 Func<IQueryable<TEntity>, IQueryable<TEntity>> outerFunction,
-                                                                EfEagerLoadContext eagerLoadContext) where TEntity : class
+                                                                EagerLoadContext eagerLoadContext) where TEntity : class
         {
             var resultingFunction = outerFunction;
 
@@ -61,7 +61,7 @@ namespace EfEagerLoad.Internal
 
                 IQueryable<TEntity> ChainedIncludeFunc(IQueryable<TEntity> f) => f.Include(navigationName);
 
-                resultingFunction = JoinQueryFunctions(resultingFunction, ChainedIncludeFunc);
+                resultingFunction = ComposeQueryFunctions(resultingFunction, ChainedIncludeFunc);
                 eagerLoadContext.NavigationPropertiesToIgnore.Add(navigationName);
 
                 if (navigationProperty.IsCollection())
@@ -84,7 +84,7 @@ namespace EfEagerLoad.Internal
             return resultingFunction;
         }
 
-        private static Func<T, T> JoinQueryFunctions<T>(Func<T, T> innerFunction, Func<T, T> outerFunction)
+        private static Func<T, T> ComposeQueryFunctions<T>(Func<T, T> innerFunction, Func<T, T> outerFunction)
         {
             return arg => outerFunction(innerFunction(arg));
         }

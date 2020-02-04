@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using EfEagerLoad.Common;
+using EfEagerLoad.IncludeStrategy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfEagerLoad
 {
-    public class EfEagerLoadContext
+    public class EagerLoadContext
     {
         private readonly Stack<INavigation> _navigationTreeStack = new Stack<INavigation>();
         private readonly List<Type> _typesVisited = new List<Type>();
 
-        public EfEagerLoadContext(Type rootType, DbContext dbContext, IList<string> navigationPropertiesToIgnore, 
-                                Predicate<EfEagerLoadContext> shouldIncludeNavigation)
+        public EagerLoadContext(Type rootType, DbContext dbContext, IList<string> navigationPropertiesToIgnore,
+                                IIncludeStrategy includeStrategy, IncludeExecution includeExecution)
         {
             Guard.IsNotNull(nameof(rootType), rootType);
             Guard.IsNotNull(nameof(dbContext), dbContext);
-            Guard.IsNotNull(nameof(shouldIncludeNavigation), shouldIncludeNavigation);
+            Guard.IsNotNull(nameof(includeStrategy), includeStrategy);
 
             RootType = rootType;
             DbContext = dbContext;
             NavigationPropertiesToIgnore = navigationPropertiesToIgnore ?? new List<string>();
-            ShouldIncludeNavigation = shouldIncludeNavigation;
+            IncludeStrategy = includeStrategy;
+            IncludeExecution = includeExecution;
         }
 
         public Type RootType { get; }
@@ -37,7 +39,9 @@ namespace EfEagerLoad
 
         public IReadOnlyList<Type> TypesVisited => _typesVisited;
 
-        public Predicate<EfEagerLoadContext> ShouldIncludeNavigation { get; set; }
+        public IIncludeStrategy IncludeStrategy { get; set; }
+
+        public IncludeExecution IncludeExecution { get; }
 
         public void AddTypeVisited(Type visitedType) => _typesVisited.Add(visitedType);
 

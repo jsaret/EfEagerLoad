@@ -4,6 +4,7 @@ using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
 using EfEagerLoad.Extensions;
+using EfEagerLoad.IncludeStrategy;
 using EfEagerLoad.Testing.Data;
 using EfEagerLoad.Testing.Model;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +23,9 @@ namespace EfEagerLoad.Benchmarks.Miscellaneous
         {
             var bookQuery = new Book[0].AsQueryable();
             return bookQuery.Include(nameof(Book.Author))
-                                .Include($"{nameof(Book.Author)}.{ nameof(Author.Books)}")
-                            .Include(nameof(Book.Category))
-                            .Include(nameof(Book.Publisher)).ToArray();
+                .Include($"{nameof(Book.Author)}.{ nameof(Author.Books)}")
+                .Include(nameof(Book.Category))
+                .Include(nameof(Book.Publisher)).ToArray();
         }
 
         [Benchmark]
@@ -32,8 +33,8 @@ namespace EfEagerLoad.Benchmarks.Miscellaneous
         {
             var bookQuery = new Book[0].AsQueryable();
             return bookQuery.Include(book => book.Author).ThenInclude(author => author.Books)
-                            .Include(book => book.Category)
-                            .Include(book => book.Publisher).ToArray();
+                .Include(book => book.Category)
+                .Include(book => book.Publisher).ToArray();
         }
 
         [Benchmark]

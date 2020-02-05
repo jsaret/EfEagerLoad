@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EfEagerLoad.ConsoleTester.Configuration;
+using EfEagerLoad.Extensions;
 using EfEagerLoad.Testing.Data;
 using EfEagerLoad.Testing.Extensions;
+using EfEagerLoad.Testing.Model;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EfEagerLoad.ConsoleTester
@@ -10,11 +14,32 @@ namespace EfEagerLoad.ConsoleTester
     public class Program
     {
         private const string ConnectionString = "Server=.;Database=EfEagerLoad;Trusted_Connection=True;";
+        private static readonly TestDbContext _testDbContext = new TestDbContext(new DbContextOptionsBuilder<TestDbContext>()
+                                                    .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
 
         public static async Task Main(string[] args)
         {
-            Func<Task> runFunc = Run;
-            await runFunc.RunInConsole();
+            var value = Perf();
+
+            if (value == null)
+            {
+                Console.WriteLine("1");
+            }
+
+            Console.WriteLine("2");
+            //Func<Task> runFunc = Run;
+            //await runFunc.RunInConsole();
+        }
+
+        public static object Perf()
+        {
+            var item = new object();
+            Enumerable.Range(0, 10000).ForEach(_ =>
+            {
+                var bookQuery = new Book[0].AsQueryable();
+                item = bookQuery.EagerLoad(_testDbContext, true, "Test").ToArray();
+            });
+            return item;
         }
 
         public static async Task Run()

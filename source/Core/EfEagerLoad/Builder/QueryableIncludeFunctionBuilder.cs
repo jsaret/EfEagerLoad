@@ -7,30 +7,29 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfEagerLoad.Builder
 {
-    public static class EfQueryableInternalFunctionBuilder
+    public class QueryableIncludeFunctionBuilder
     {
         private static readonly ConcurrentDictionary<Type, object> IncludeFunctions = new ConcurrentDictionary<Type, object>();
-        
-        internal static Func<IQueryable<TEntity>, IQueryable<TEntity>> GetIncludeFunction<TEntity>(EagerLoadContext eagerLoadContext) 
-                                                                                                    where TEntity : class
+
+        public Func<IQueryable<TEntity>, IQueryable<TEntity>> GetIncludeFunction<TEntity>(EagerLoadContext eagerLoadContext) where TEntity : class
         {
             if (eagerLoadContext.NavigationPropertiesToIgnore.Count == 0)
             {
-                return (Func<IQueryable<TEntity>, IQueryable<TEntity>>) IncludeFunctions.GetOrAdd(typeof(TEntity), type =>
+                return (Func<IQueryable<TEntity>, IQueryable<TEntity>>)IncludeFunctions.GetOrAdd(typeof(TEntity), type =>
                 {
                     static IQueryable<TEntity> CachedResultFunction(IQueryable<TEntity> queryable) => queryable;
-                    return ComposeFunctionForIncludesForType(typeof(TEntity), string.Empty, 
-                                (Func<IQueryable<TEntity>, IQueryable<TEntity>>)CachedResultFunction, eagerLoadContext);
+                    return ComposeFunctionForIncludesForType(typeof(TEntity), string.Empty,
+                        (Func<IQueryable<TEntity>, IQueryable<TEntity>>)CachedResultFunction, eagerLoadContext);
                 });
             }
 
             static IQueryable<TEntity> ResultFunction(IQueryable<TEntity> queryable) => queryable;
-            return ComposeFunctionForIncludesForType(typeof(TEntity), string.Empty, (Func<IQueryable<TEntity>, IQueryable<TEntity>>) ResultFunction, 
-                                                    eagerLoadContext);
+            return ComposeFunctionForIncludesForType(typeof(TEntity), string.Empty, (Func<IQueryable<TEntity>, IQueryable<TEntity>>)ResultFunction,
+                eagerLoadContext);
         }
 
         private static Func<IQueryable<TEntity>, IQueryable<TEntity>> ComposeFunctionForIncludesForType<TEntity>(Type type, string prefix,
-                        Func<IQueryable<TEntity>, IQueryable<TEntity>> originalFunction, EagerLoadContext eagerLoadContext) 
+                        Func<IQueryable<TEntity>, IQueryable<TEntity>> originalFunction, EagerLoadContext eagerLoadContext)
             where TEntity : class
         {
             eagerLoadContext.AddTypeVisited(type);
@@ -41,12 +40,12 @@ namespace EfEagerLoad.Builder
             var resultingFunction = originalFunction;
 
             resultingFunction = ComposeIncludeFunctionsForNavigationProperties(prefix, navigationProperties, resultingFunction, eagerLoadContext);
-            
+
             return resultingFunction;
         }
 
         private static Func<IQueryable<TEntity>, IQueryable<TEntity>> ComposeIncludeFunctionsForNavigationProperties<TEntity>(
-                                                                string prefix, IEnumerable<INavigation> navigationProperties, 
+                                                                string prefix, IEnumerable<INavigation> navigationProperties,
                                                                 Func<IQueryable<TEntity>, IQueryable<TEntity>> outerFunction,
                                                                 EagerLoadContext eagerLoadContext) where TEntity : class
         {
@@ -55,7 +54,7 @@ namespace EfEagerLoad.Builder
             foreach (var navigationProperty in navigationProperties)
             {
                 var navigationName = $"{prefix}{navigationProperty.Name}";
-                if (eagerLoadContext.NavigationPropertiesToIgnore.Contains(navigationName)){ continue; }
+                if (eagerLoadContext.NavigationPropertiesToIgnore.Contains(navigationName)) { continue; }
 
                 eagerLoadContext.SetCurrentNavigation(navigationProperty);
 

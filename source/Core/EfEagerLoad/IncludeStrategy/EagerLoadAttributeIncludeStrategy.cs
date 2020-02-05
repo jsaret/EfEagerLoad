@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Linq;
+using System.Reflection;
 using EfEagerLoad.Attributes;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,12 +10,16 @@ namespace EfEagerLoad.IncludeStrategy
 {
     public class EagerLoadAttributeIncludeStrategy : IIncludeStrategy
     {
+        private static readonly ConcurrentDictionary<PropertyInfo, EagerLoadAttribute> EagerLoadAttributeCache = new ConcurrentDictionary<PropertyInfo, EagerLoadAttribute>();
+
         public bool ShouldIncludeNavigation(EagerLoadContext context)
         {
             if (context.CurrentNavigation == null) { return true; }
 
-            var eagerLoadAttribute = Attribute.GetCustomAttributes(context.CurrentNavigation.PropertyInfo, typeof(EagerLoadAttribute))
-                .OfType<EagerLoadAttribute>().FirstOrDefault();
+            var eagerLoadAttribute = EagerLoadAttributeCache.GetOrAdd(context.CurrentNavigation?.PropertyInfo, property => 
+                                                                    Attribute.GetCustomAttributes(property, typeof(EagerLoadAttribute))
+                                                                    .OfType<EagerLoadAttribute>().FirstOrDefault());
+
 
             if (eagerLoadAttribute == null) { return false; }
 

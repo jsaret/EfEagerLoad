@@ -17,39 +17,38 @@ namespace EfEagerLoad.Benchmarks.Miscellaneous
     public class General
     {
         private TestDbContext _testDbContext;
-        private static readonly IQueryable<Book> BookQuery = new Book[0].AsQueryable();
 
         [Benchmark(Baseline = true)]
         public IList<Book> HandCoded_Navigation()
         {
-            //_testDbContext.Books
-            return BookQuery.Include(nameof(Book.Author))
-                        .Include($"{nameof(Book.Author)}.{ nameof(Author.Books)}")
-                    .Include(nameof(Book.Category))
-                    .Include(nameof(Book.Publisher)).ToArray();
+            var bookQuery = new Book[0].AsQueryable();
+            return bookQuery.Include(nameof(Book.Author))
+                .Include($"{nameof(Book.Author)}.{ nameof(Author.Books)}")
+                .Include(nameof(Book.Category))
+                .Include(nameof(Book.Publisher)).ToArray();
         }
 
         [Benchmark]
         public IList<Book> HandCoded_Expressions()
         {
-            return BookQuery
-                    .Include(book => book.Author)
-                        .ThenInclude(author => author.Books)
-                    .Include(book => book.Category)
-                    .Include(book => book.Publisher).ToArray();
+            var bookQuery = new Book[0].AsQueryable();
+            return bookQuery.Include(book => book.Author).ThenInclude(author => author.Books)
+                .Include(book => book.Category)
+                .Include(book => book.Publisher).ToArray();
         }
 
         [Benchmark]
         public IList<Book> EfEagerLoad_NotCached()
         {
             var bookQuery = new Book[0].AsQueryable();
-            return bookQuery.EagerLoad(_testDbContext, IncludeExecution.NoCache).ToArray();
+            return bookQuery.EagerLoad(_testDbContext, true, "Test").ToArray();
         }
 
         [Benchmark]
         public IList<Book> EfEagerLoad_Cached()
         {
-            return BookQuery.EagerLoad(_testDbContext, IncludeExecution.Cached).ToArray();
+            var bookQuery = new Book[0].AsQueryable();
+            return bookQuery.EagerLoad(_testDbContext, true).ToArray();
         }
 
 

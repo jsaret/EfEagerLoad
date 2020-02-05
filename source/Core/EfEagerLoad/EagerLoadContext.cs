@@ -9,7 +9,7 @@ namespace EfEagerLoad
 {
     public class EagerLoadContext
     {
-        private readonly Stack<INavigation> _navigationTreeStack = new Stack<INavigation>();
+        private readonly Stack<INavigation> _navigationStack = new Stack<INavigation>();
         private readonly List<Type> _typesVisited = new List<Type>();
 
         public EagerLoadContext(Type rootType, DbContext dbContext, IList<string> navigationPropertiesToIgnore,
@@ -31,7 +31,7 @@ namespace EfEagerLoad
 
         public INavigation CurrentNavigation { get; private set; }
 
-        public IReadOnlyList<INavigation> NavigationTree => _navigationTreeStack.ToArray();
+        public IReadOnlyList<INavigation> NavigationPath => _navigationStack.ToArray();
 
         public DbContext DbContext { get; }
 
@@ -43,20 +43,22 @@ namespace EfEagerLoad
 
         public IncludeExecution IncludeExecution { get; }
 
+        public IList<string> PathsToInclude { get; } = new List<string>();
+
         public void AddTypeVisited(Type visitedType) => _typesVisited.Add(visitedType);
 
         internal void SetCurrentNavigation(INavigation navigation)
         {
             CurrentNavigation = navigation;
-            _navigationTreeStack.Push(navigation);
+            _navigationStack.Push(navigation);
         }
 
         internal INavigation RemoveCurrentNavigation()
         {
-            if (_navigationTreeStack.Count == 0) { return null; }
+            if (_navigationStack.Count == 0) { return null; }
             
-            var currentNavigationToRemove = _navigationTreeStack.Pop();
-            CurrentNavigation = (_navigationTreeStack.Count > 0) ? _navigationTreeStack.Peek() : null;
+            var currentNavigationToRemove = _navigationStack.Pop();
+            CurrentNavigation = (_navigationStack.Count > 0) ? _navigationStack.Peek() : null;
             return currentNavigationToRemove;
 
         }

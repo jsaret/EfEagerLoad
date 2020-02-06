@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EfEagerLoad.IncludeStrategy
 {
-    public class EagerLoadAttributeIncludeStrategy : IIncludeStrategy
+    public class EagerLoadAttributeIncludeStrategy : IncludeStrategy
     {
         private static readonly ConcurrentDictionary<PropertyInfo, EagerLoadAttribute> EagerLoadAttributeCache = new ConcurrentDictionary<PropertyInfo, EagerLoadAttribute>();
 
-        public bool ShouldIncludeNavigation(EagerLoadContext context)
+        public override bool ShouldIncludeNavigation(EagerLoadContext context)
         {
             if (context.CurrentNavigation == null) { return true; }
 

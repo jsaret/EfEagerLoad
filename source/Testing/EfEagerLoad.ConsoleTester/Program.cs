@@ -23,23 +23,24 @@ namespace EfEagerLoad.ConsoleTester
 
             if (value == null)
             {
-                Console.WriteLine("1");
+                Console.WriteLine();
             }
 
-            Console.WriteLine("2");
             //Func<Task> runFunc = Run;
             //await runFunc.RunInConsole();
         }
 
         public static object Perf()
         {
-            var item = new object();
-            Enumerable.Range(0, 10000).ForEach(_ =>
-            {
-                var bookQuery = new Book[0].AsQueryable();
-                item = bookQuery.EagerLoad(_testDbContext, true, "Test").ToArray();
-            });
-            return item;
+            var bookQuery = new Book[0].AsQueryable();
+            return bookQuery.EagerLoad(_testDbContext, false).ToArray();
+            //var item = new object();
+            //Enumerable.Range(0, 100000).ForEach(_ =>
+            //{
+            //    var bookQuery = new Book[0].AsQueryable();
+            //    item = bookQuery.EagerLoad(_testDbContext, true, "Test").ToArray();
+            //});
+            //return item;
         }
 
         public static async Task Run()

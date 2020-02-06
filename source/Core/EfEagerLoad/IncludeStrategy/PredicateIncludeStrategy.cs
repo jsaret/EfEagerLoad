@@ -3,7 +3,7 @@ using EfEagerLoad.Common;
 
 namespace EfEagerLoad.IncludeStrategy
 {
-    public class PredicateIncludeStrategy : IIncludeStrategy
+    public class PredicateIncludeStrategy : IncludeStrategy
     {
         private readonly Predicate<EagerLoadContext> _strategy;
 
@@ -13,7 +13,7 @@ namespace EfEagerLoad.IncludeStrategy
             _strategy = strategy;
         }
 
-        public bool ShouldIncludeNavigation(EagerLoadContext context)
+        public override bool ShouldIncludeNavigation(EagerLoadContext context)
         {
             return _strategy(context);
         }

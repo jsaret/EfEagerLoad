@@ -8,7 +8,7 @@ namespace EfEagerLoad.Extensions
     public static class EagerLoadAllExtensions
     {
 
-        private static readonly NoShadowNavigationIncludeStrategy NoShadowNavigationIncludeStrategy = new NoShadowNavigationIncludeStrategy();
+        private static readonly AllNavigationsIncludeStrategy NoShadowNavigationIncludeStrategy = new AllNavigationsIncludeStrategy();
 
         public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext) where TEntity : class
         {

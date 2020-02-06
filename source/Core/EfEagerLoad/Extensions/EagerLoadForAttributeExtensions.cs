@@ -8,7 +8,7 @@ namespace EfEagerLoad.Extensions
     public static class EagerLoadForAttributeExtensions
     {
 
-        private static readonly NoShadowNavigationIncludeStrategy CachedNoShadowNavigationIncludeStrategy = new NoShadowNavigationIncludeStrategy();
+        private static readonly AllNavigationsIncludeStrategy CachedNoShadowNavigationIncludeStrategy = new AllNavigationsIncludeStrategy();
 
         public static IQueryable<TEntity> EagerLoadForAttribute<TEntity, TAttribute>(this IQueryable<TEntity> originalQuery, DbContext dbContext, 
                                                                                 params string[] navigationPropertiesToIgnore)

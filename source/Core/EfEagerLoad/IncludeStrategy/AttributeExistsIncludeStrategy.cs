@@ -2,9 +2,9 @@
 
 namespace EfEagerLoad.IncludeStrategy
 {
-    public class AttributeExistsIncludeStrategy<TAttribute> : IIncludeStrategy
+    public class AttributeExistsIncludeStrategy<TAttribute> : IncludeStrategy
     {
-        public bool ShouldIncludeNavigation(EagerLoadContext context)
+        public override bool ShouldIncludeNavigation(EagerLoadContext context)
         {
             return (context.CurrentNavigation?.PropertyInfo != null) && Attribute.IsDefined(context.CurrentNavigation.PropertyInfo, typeof(TAttribute));
         }

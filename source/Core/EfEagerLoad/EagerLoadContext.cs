@@ -12,30 +12,30 @@ namespace EfEagerLoad
         private readonly Stack<INavigation> _navigationStack = new Stack<INavigation>();
         private readonly List<Type> _typesVisited = new List<Type>();
 
-        public EagerLoadContext(Type rootType, DbContext dbContext, IList<string> navigationPropertiesToIgnore,
-                                IIncludeStrategy includeStrategy, IncludeExecution includeExecution)
+        public EagerLoadContext(DbContext dbContext, IIncludeStrategy includeStrategy, IList<string> navigationPropertiesToIgnore, 
+                                IncludeExecution includeExecution = IncludeExecution.Cached, Type rooType = null)
         {
-            Guard.IsNotNull(nameof(rootType), rootType);
             Guard.IsNotNull(nameof(dbContext), dbContext);
             Guard.IsNotNull(nameof(includeStrategy), includeStrategy);
 
-            RootType = rootType;
+            RootType = rooType;
             DbContext = dbContext;
-            NavigationPropertiesToIgnore = navigationPropertiesToIgnore ?? new List<string>();
+            NavigationPathsToIgnore = navigationPropertiesToIgnore ?? new List<string>();
             IncludeStrategy = includeStrategy;
             IncludeExecution = includeExecution;
         }
 
-        public Type RootType { get; }
+        public Type RootType { get; internal set; }
 
+         public INavigation CurrentNavigation { get; private set; }
 
-        public INavigation CurrentNavigation { get; private set; }
+         public string CurrentPath { get; internal set; }
 
         public IReadOnlyList<INavigation> NavigationPath => _navigationStack.ToArray();
 
         public DbContext DbContext { get; }
 
-        public IList<string> NavigationPropertiesToIgnore { get; }
+        public IList<string> NavigationPathsToIgnore { get; }
 
         public IReadOnlyList<Type> TypesVisited => _typesVisited;
 
@@ -43,7 +43,7 @@ namespace EfEagerLoad
 
         public IncludeExecution IncludeExecution { get; }
 
-        public IList<string> PathsToInclude { get; } = new List<string>();
+        public IList<string> NavigationPathsFoundToInclude { get; } = new List<string>();
 
         public void AddTypeVisited(Type visitedType) => _typesVisited.Add(visitedType);
 

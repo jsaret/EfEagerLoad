@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using EfEagerLoad.Engine;
 using EfEagerLoad.Extensions;
 using EfEagerLoad.IncludeStrategies;
 using EfEagerLoad.Testing.Model;

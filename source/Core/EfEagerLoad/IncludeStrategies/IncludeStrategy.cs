@@ -1,4 +1,5 @@
 ﻿using System;
+using EfEagerLoad.Common;
 using EfEagerLoad.Engine;
 
 namespace EfEagerLoad.IncludeStrategies

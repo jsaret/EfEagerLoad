@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using EfEagerLoad.Common;
 using EfEagerLoad.Engine;
-using EfEagerLoad.IncludeStrategies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EfEagerLoad
+namespace EfEagerLoad.Common
 {
     public class EagerLoadContext
     {

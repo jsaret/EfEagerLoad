@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 using EfEagerLoad.Attributes;
+using EfEagerLoad.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace EfEagerLoad.IncludeStrategies

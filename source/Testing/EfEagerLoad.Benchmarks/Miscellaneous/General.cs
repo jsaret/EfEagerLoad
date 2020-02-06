@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
+using EfEagerLoad.Engine;
 using EfEagerLoad.Extensions;
 using EfEagerLoad.IncludeStrategies;
 using EfEagerLoad.Testing.Data;

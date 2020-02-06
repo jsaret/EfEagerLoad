@@ -10,21 +10,21 @@ namespace EfEagerLoad.Extensions
 
         private static readonly AllNavigationsIncludeStrategy NoShadowNavigationIncludeStrategy = new AllNavigationsIncludeStrategy();
 
-        public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext) where TEntity : class
+        public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> query, DbContext dbContext) where TEntity : class
         {
-            return originalQuery.EagerLoadAll(dbContext, true);
+            return query.EagerLoadAll(dbContext, true);
         }
 
-        public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, bool eagerLoad,
+        public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, bool eagerLoad,
                                                                 params string[] navigationPropertiesToIgnore) where TEntity : class
         {
-            return originalQuery.EagerLoadAll(dbContext, (eagerLoad ? IncludeExecution.Cached : IncludeExecution.Skip), navigationPropertiesToIgnore);
+            return query.EagerLoadAll(dbContext, (eagerLoad ? IncludeExecution.Cached : IncludeExecution.Skip), navigationPropertiesToIgnore);
         }
 
-        public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, IncludeExecution includeExecution,
+        public static IQueryable<TEntity> EagerLoadAll<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, IncludeExecution includeExecution,
                                                         params string[] navigationPropertiesToIgnore) where TEntity : class
         {
-            return originalQuery.EagerLoadMatching(dbContext, NoShadowNavigationIncludeStrategy, includeExecution, navigationPropertiesToIgnore);
+            return query.EagerLoadMatching(dbContext, NoShadowNavigationIncludeStrategy, includeExecution, navigationPropertiesToIgnore);
         }
         
     }

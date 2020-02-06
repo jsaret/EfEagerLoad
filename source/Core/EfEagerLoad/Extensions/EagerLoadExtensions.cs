@@ -10,24 +10,24 @@ namespace EfEagerLoad.Extensions
         private static readonly EagerLoadAttributeIncludeStrategy CachedEagerLoadAttributeIncludeStrategy = new EagerLoadAttributeIncludeStrategy();
 
         
-        public static IQueryable<TEntity> EagerLoad<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, params string[] ignoredNavigationProperties) 
+        public static IQueryable<TEntity> EagerLoad<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, params string[] ignoredNavigationProperties) 
                                                             where TEntity : class
         {
-            return originalQuery.EagerLoad(dbContext, true, ignoredNavigationProperties);
+            return query.EagerLoad(dbContext, true, ignoredNavigationProperties);
         }
 
 
-        public static IQueryable<TEntity> EagerLoad<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, bool eagerLoad,
+        public static IQueryable<TEntity> EagerLoad<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, bool eagerLoad,
                                                         params string[] ignoredNavigationProperties) where TEntity : class
         {
-            return originalQuery.EagerLoad(dbContext, (eagerLoad ? IncludeExecution.Cached : IncludeExecution.Skip), ignoredNavigationProperties);
+            return query.EagerLoad(dbContext, (eagerLoad ? IncludeExecution.Cached : IncludeExecution.Skip), ignoredNavigationProperties);
         }
 
 
-        public static IQueryable<TEntity> EagerLoad<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, IncludeExecution includeExecution,
+        public static IQueryable<TEntity> EagerLoad<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, IncludeExecution includeExecution,
                                                                 params string[] ignoredNavigationProperties) where TEntity : class
         {
-            return originalQuery.EagerLoadMatching(dbContext, CachedEagerLoadAttributeIncludeStrategy, includeExecution, ignoredNavigationProperties);
+            return query.EagerLoadMatching(dbContext, CachedEagerLoadAttributeIncludeStrategy, includeExecution, ignoredNavigationProperties);
         }
 
     }

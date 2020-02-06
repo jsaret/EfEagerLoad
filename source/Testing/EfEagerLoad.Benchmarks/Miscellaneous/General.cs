@@ -41,7 +41,7 @@ namespace EfEagerLoad.Benchmarks.Miscellaneous
         public IList<Book> EfEagerLoad_NotCached()
         {
             var bookQuery = new Book[0].AsQueryable();
-            return bookQuery.EagerLoad(_testDbContext, false).ToArray();
+            return bookQuery.EagerLoad(_testDbContext, IncludeExecution.NoCache).ToArray();
         }
 
         [Benchmark]

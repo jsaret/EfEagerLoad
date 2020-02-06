@@ -33,9 +33,11 @@ namespace EfEagerLoad.ConsoleTester
         public static object Perf()
         {
             var bookQuery = new Book[0].AsQueryable();
-            return _testDbContext.Books.AsQueryable().EagerLoad(_testDbContext, IncludeStrategy.IncludeExecution.NoCache).ToArray();
+            return bookQuery.AsQueryable().EagerLoad(_testDbContext, IncludeStrategy.IncludeExecution.NoCache).ToArray();
+
+
             //var item = new object();
-            //Enumerable.Range(0, 100000).ForEach(_ =>
+            //Enumerable.Range(0, 50000).ForEach(_ =>
             //{
             //    var bookQuery = new Book[0].AsQueryable();
             //    item = bookQuery.EagerLoad(_testDbContext, true, "Test").ToArray();
@@ -54,7 +56,7 @@ namespace EfEagerLoad.ConsoleTester
             //await testRunner.RunTest4();
 
             //await testRunner.RunTest5();
-            //await testRunner.RunTest6();
+            await testRunner.RunTest6();
         }
 
         private static async Task<IServiceProvider> SetupServices()

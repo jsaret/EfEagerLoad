@@ -8,26 +8,26 @@ namespace EfEagerLoad.Extensions
     public static class EagerLoadMatchingIncludeStrategyExtensions
     {
 
-        public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, IIncludeStrategy includeStrategy,
+        public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, IIncludeStrategy includeStrategy,
                                          params string[] navigationPropertiesToIgnore) where TEntity : class
         {
-            return originalQuery.EagerLoadMatching(dbContext, includeStrategy, true, navigationPropertiesToIgnore);
+            return query.EagerLoadMatching(dbContext, includeStrategy, true, navigationPropertiesToIgnore);
         }
 
 
-        public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, IIncludeStrategy includeStrategy,
+        public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, IIncludeStrategy includeStrategy,
                                                                     bool eagerLoad, params string[] navigationPropertiesToIgnore) where TEntity : class
         {
-            return originalQuery.EagerLoadMatching(dbContext, includeStrategy, (eagerLoad ? IncludeExecution.Cached : IncludeExecution.Skip), 
+            return query.EagerLoadMatching(dbContext, includeStrategy, (eagerLoad ? IncludeExecution.Cached : IncludeExecution.Skip), 
                                                     navigationPropertiesToIgnore);
         }
 
 
-        public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> originalQuery, DbContext dbContext, IIncludeStrategy includeStrategy, 
+        public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, IIncludeStrategy includeStrategy, 
                                         IncludeExecution includeExecution, params string[] navigationPropertiesToIgnore) where TEntity : class
         {
-            var eagerLoadContext = new EagerLoadContext(dbContext, includeStrategy,navigationPropertiesToIgnore, includeExecution, typeof(TEntity));
-            return originalQuery.EagerLoadWithContext(eagerLoadContext);
+            var context = new EagerLoadContext(dbContext, includeStrategy,navigationPropertiesToIgnore, includeExecution, typeof(TEntity));
+            return query.EagerLoadWithContext(context);
         }
 
     }

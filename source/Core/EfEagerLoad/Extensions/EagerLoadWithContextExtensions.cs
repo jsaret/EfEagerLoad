@@ -10,17 +10,10 @@ namespace EfEagerLoad.Extensions
     {
         public static readonly IncludeEngine CachedIncludeEngine = new IncludeEngine();
 
-        internal static IQueryable<TEntity> EagerLoadWithContext<TEntity>(this IQueryable<TEntity> originalQuery, EagerLoadContext eagerLoadContext)
+        internal static IQueryable<TEntity> EagerLoadWithContext<TEntity>(this IQueryable<TEntity> query, EagerLoadContext context)
             where TEntity : class
         {
-            Guard.IsNotNull(nameof(originalQuery), originalQuery);
-            Guard.IsNotNull(nameof(eagerLoadContext), eagerLoadContext);
-
-            //if (!(originalQuery.Provider is EntityQueryProvider)) { return originalQuery; }
-
-            var includeNavigationPaths = CachedIncludeEngine.BuildIncludesForRootType<TEntity>(eagerLoadContext);
-            foreach (var item in includeNavigationPaths) { Console.WriteLine(item); }
-            return includeNavigationPaths.Aggregate(originalQuery, (current, navigationPath) => current.Include(navigationPath));
+            return CachedIncludeEngine.RunIncludesForType(query, context);
         }
     }
 }

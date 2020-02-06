@@ -27,7 +27,7 @@ namespace EfEagerLoad.Engine
 
             foreach (var navigation in navigations)
             {
-                var navigationName = $"{navigation.Name}";
+                var navigationName = $"{prefix}{navigation.Name}";
 
                 if (context.IncludeStrategy.ShouldIgnoreNavigationPath(context, navigationName)) { continue; }
 
@@ -37,12 +37,10 @@ namespace EfEagerLoad.Engine
                 context.NavigationPathsToIgnore.Add(navigationName);
 
                 var typeToExamine = navigation.IsCollection() ? navigation.GetTargetType().ClrType : navigation.ClrType;
-                var navigationNamePrefix = context.NavigationPath.Any() ? $"{prefix}.{navigation.Name}" : $"{navigation.Name}";
 
-                BuildIncludesForType(context, typeToExamine, navigationNamePrefix);
+                BuildIncludesForType(context, typeToExamine, $"{navigationName}.");
+                context.RemoveCurrentNavigation();
             }
-
-            context.RemoveCurrentNavigation();
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Linq;
 using EfEagerLoad.Builder;
 using EfEagerLoad.Common;
-using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.EntityFrameworkCore;
 
 namespace EfEagerLoad.Extensions
 {
@@ -18,8 +18,9 @@ namespace EfEagerLoad.Extensions
 
             //if (!(originalQuery.Provider is EntityQueryProvider)) { return originalQuery; }
 
-            var includeFunction = CachedQueryableIncludeFunctionBuilder.GetIncludeFunction<TEntity>(eagerLoadContext);
-            return includeFunction(originalQuery);
+            var includeNavigationPaths = CachedQueryableIncludeFunctionBuilder.BuildIncludesForRootType<TEntity>(eagerLoadContext);
+            foreach (var item in includeNavigationPaths) { Console.WriteLine(item); }
+            return includeNavigationPaths.Aggregate(originalQuery, (current, navigationPath) => current.Include(navigationPath));
         }
     }
 }

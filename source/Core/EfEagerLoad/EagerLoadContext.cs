@@ -20,7 +20,7 @@ namespace EfEagerLoad
 
             RootType = rooType;
             DbContext = dbContext;
-            NavigationPathsToIgnore = navigationPropertiesToIgnore ?? new List<string>();
+            NavigationPathsToIgnore =  new List<string>(navigationPropertiesToIgnore ?? new string[0]);
             IncludeStrategy = includeStrategy;
             IncludeExecution = includeExecution;
         }

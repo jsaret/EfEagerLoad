@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using EfEagerLoad.Common;
 using EfEagerLoad.IncludeStrategy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -10,41 +11,51 @@ namespace EfEagerLoad.Builder
 {
     public class QueryableIncludeFunctionBuilder
     {
-        private static readonly ConcurrentDictionary<Type, object> CachedIncludeFunctions = new ConcurrentDictionary<Type, object>();
+        private static readonly ConcurrentDictionary<Type, IEnumerable<string>> CachedIncludeNavigationPaths = new ConcurrentDictionary<Type, IEnumerable<string>>();
         private static readonly ConcurrentDictionary<Type, IEnumerable<INavigation>> CachedTypeNavigations = new ConcurrentDictionary<Type, IEnumerable<INavigation>>();
 
-        public Func<IQueryable<TEntity>, IQueryable<TEntity>> GetIncludeFunction<TEntity>(EagerLoadContext eagerLoadContext) where TEntity : class
+        public IEnumerable<string> BuildIncludesForRootType<TEntity>(EagerLoadContext eagerLoadContext) where TEntity : class
         {
-            static IQueryable<TEntity> ResultFunction(IQueryable<TEntity> queryable) => queryable;
+           if(eagerLoadContext.RootType == null) { eagerLoadContext.RootType = typeof(TEntity); }
 
-            eagerLoadContext.RootType = typeof(TEntity);
-
-            if (eagerLoadContext.IncludeExecution == IncludeExecution.Skip) { return ResultFunction;}
-
-            if (eagerLoadContext.IncludeExecution == IncludeExecution.Cached)
-            {
-                return (Func<IQueryable<TEntity>, IQueryable<TEntity>>)CachedIncludeFunctions.GetOrAdd(typeof(TEntity), (type) =>
-                        ComposeFunctionForIncludesForType(typeof(TEntity), string.Empty, (Func<IQueryable<TEntity>, IQueryable<TEntity>>)ResultFunction,
-                            eagerLoadContext));
-            }
-
-            var result = ComposeFunctionForIncludesForType(typeof(TEntity), string.Empty, (Func<IQueryable<TEntity>, IQueryable<TEntity>>)ResultFunction,
-                                                            eagerLoadContext);
-
-            if (eagerLoadContext.IncludeExecution == IncludeExecution.Recache)
-            {
-                CachedIncludeFunctions.TryAdd(typeof(TEntity), result);
-            }
-
-            return ResultFunction;
+            return BuildIncludesForRootType(eagerLoadContext);
         }
 
-        private static void BuildIncludesForRootType(EagerLoadContext eagerLoadContext)
+        public static IEnumerable<string> BuildIncludesForRootType(EagerLoadContext eagerLoadContext)
         {
-            BuildIncludesForType(eagerLoadContext, eagerLoadContext.RootType, string.Empty);
+            Guard.IsNotNull(nameof(EagerLoadContext.RootType), eagerLoadContext.RootType);
+            IEnumerable<string> includeStatements = new string[0];
+
+            switch (eagerLoadContext.IncludeExecution)
+            {
+                case IncludeExecution.Cached:
+                {
+                    includeStatements = CachedIncludeNavigationPaths.GetOrAdd(eagerLoadContext.RootType, (type) => BuildIncludesForRootTypeCore(eagerLoadContext));
+                    break;
+                }
+                case IncludeExecution.NoCache:
+                {
+                    includeStatements = BuildIncludesForRootTypeCore(eagerLoadContext);
+                    break;
+                }
+                case IncludeExecution.Recache:
+                {
+                    includeStatements = BuildIncludesForRootTypeCore(eagerLoadContext);
+                    CachedIncludeNavigationPaths.TryAdd(eagerLoadContext.RootType, includeStatements);
+                    break;
+                }
+            }
+
+            return includeStatements;
         }
 
-        private static void BuildIncludesForType(EagerLoadContext eagerLoadContext, Type type, string prefix)
+        private static IEnumerable<string> BuildIncludesForRootTypeCore(EagerLoadContext eagerLoadContext)
+        {
+            BuildIncludesForType(eagerLoadContext, eagerLoadContext.RootType, string.Empty, _ => {});
+            return eagerLoadContext.NavigationPathsFoundToInclude;
+        }
+
+        private static void BuildIncludesForType(EagerLoadContext eagerLoadContext, Type type, string prefix, Action<EagerLoadContext> closingAction)
         {
             eagerLoadContext.AddTypeVisited(type);
             var navigations = CachedTypeNavigations.GetOrAdd(type, typeToFind => 
@@ -52,14 +63,10 @@ namespace EfEagerLoad.Builder
             navigations = navigations.Where(currentNavigation => eagerLoadContext.IncludeStrategy.ShouldIncludeNavigation(eagerLoadContext))
                                     .ToArray();
 
-            BuildIncludesForNavigations(eagerLoadContext, navigations, prefix);
-        }
-
-        private static void BuildIncludesForNavigations(EagerLoadContext eagerLoadContext, IEnumerable<INavigation> navigationToInclude, string prefix)
-        {
-            foreach (var navigation in navigationToInclude)
+            foreach (var navigation in navigations)
             {
-                var navigationName = $"{prefix}{navigation.Name}";
+                var navigationName = eagerLoadContext.NavigationPath.Any() ? $"{prefix}.{navigation.Name}" : $"{navigation.Name}";
+
                 if (eagerLoadContext.IncludeStrategy.ShouldIgnoreNavigationPath(eagerLoadContext, navigationName)) { continue; }
 
                 eagerLoadContext.CurrentPath = navigationName;
@@ -67,77 +74,14 @@ namespace EfEagerLoad.Builder
                 eagerLoadContext.NavigationPathsFoundToInclude.Add(navigationName);
                 eagerLoadContext.NavigationPathsToIgnore.Add(navigationName);
 
-                var navigationPathNameToFollow = navigation.IsCollection() ? $"{navigationName}." : navigationName;
                 var typeToExamine = navigation.IsCollection() ? navigation.GetTargetType().ClrType : navigation.ClrType;
 
-                BuildIncludesForType(eagerLoadContext, typeToExamine, navigationPathNameToFollow);
-                eagerLoadContext.RemoveCurrentNavigation();
-            }
-        }
-
-
-        private static Func<IQueryable<TEntity>, IQueryable<TEntity>> ComposeFunctionForIncludesForType<TEntity>(Type type, string prefix,
-                        Func<IQueryable<TEntity>, IQueryable<TEntity>> originalFunction, EagerLoadContext eagerLoadContext)
-            where TEntity : class
-        {
-            eagerLoadContext.AddTypeVisited(type);
-
-            var navigationProperties = CachedTypeNavigations.GetOrAdd(type, _ => eagerLoadContext.DbContext.Model.FindEntityType(type).GetNavigations().ToArray());
-            navigationProperties = navigationProperties.Where(currentNavigation => eagerLoadContext.IncludeStrategy.ShouldIncludeNavigation(eagerLoadContext)).ToArray();
-
-            var resultingFunction = originalFunction;
-
-            resultingFunction = ComposeIncludeFunctionsForNavigationProperties(prefix, navigationProperties, resultingFunction, eagerLoadContext);
-
-            return resultingFunction;
-        }
-
-        private static Func<IQueryable<TEntity>, IQueryable<TEntity>> ComposeIncludeFunctionsForNavigationProperties<TEntity>(
-                                                                string prefix, IEnumerable<INavigation> navigationProperties,
-                                                                Func<IQueryable<TEntity>, IQueryable<TEntity>> outerFunction,
-                                                                EagerLoadContext eagerLoadContext) where TEntity : class
-        {
-            var resultingFunction = outerFunction;
-
-            foreach (var navigationProperty in navigationProperties)
-            {
-                var navigationName = $"{prefix}{navigationProperty.Name}";
-                if (eagerLoadContext.NavigationPathsToIgnore.Contains(navigationName)) { continue; }
-
-                eagerLoadContext.SetCurrentNavigation(navigationProperty);
-
-                IQueryable<TEntity> ChainedIncludeFunc(IQueryable<TEntity> f)
+                BuildIncludesForType(eagerLoadContext, typeToExamine, navigationName, (cxt) =>
                 {
-                    Console.WriteLine(navigationName);
-                    return f.Include(navigationName);
-                }
-
-                resultingFunction = ComposeQueryFunctions(resultingFunction, ChainedIncludeFunc);
-                eagerLoadContext.NavigationPathsToIgnore.Add(navigationName);
-
-                if (navigationProperty.IsCollection())
-                {
-                    var newCollectionPrefix = $"{navigationName}.";
-                    var collectionTargetType = navigationProperty.GetTargetType().ClrType;
-
-                    resultingFunction = ComposeFunctionForIncludesForType(collectionTargetType, newCollectionPrefix,
-                                    resultingFunction, eagerLoadContext);
-                    continue;
-                }
-
-                var targetType = navigationProperty.ClrType;
-                var newPrefix = $"{navigationName}.";
-                resultingFunction = ComposeFunctionForIncludesForType(targetType, newPrefix, resultingFunction, eagerLoadContext);
-
-                eagerLoadContext.RemoveCurrentNavigation();
+                    cxt.RemoveCurrentNavigation();
+                    closingAction(cxt);
+                });
             }
-
-            return resultingFunction;
-        }
-
-        private static Func<T, T> ComposeQueryFunctions<T>(Func<T, T> innerFunction, Func<T, T> outerFunction)
-        {
-            return arg => outerFunction(innerFunction(arg));
         }
     }
 }

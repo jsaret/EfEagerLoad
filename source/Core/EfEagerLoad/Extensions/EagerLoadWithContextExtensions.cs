@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
-using EfEagerLoad.Builder;
 using EfEagerLoad.Common;
+using EfEagerLoad.Engine;
 using Microsoft.EntityFrameworkCore;
 
 namespace EfEagerLoad.Extensions
 {
     public static class EagerLoadWithContextExtensions
     {
-        public static readonly QueryableIncludeFunctionBuilder CachedQueryableIncludeFunctionBuilder = new QueryableIncludeFunctionBuilder();
+        public static readonly IncludeEngine CachedIncludeEngine = new IncludeEngine();
 
         internal static IQueryable<TEntity> EagerLoadWithContext<TEntity>(this IQueryable<TEntity> originalQuery, EagerLoadContext eagerLoadContext)
             where TEntity : class
@@ -18,7 +18,7 @@ namespace EfEagerLoad.Extensions
 
             //if (!(originalQuery.Provider is EntityQueryProvider)) { return originalQuery; }
 
-            var includeNavigationPaths = CachedQueryableIncludeFunctionBuilder.BuildIncludesForRootType<TEntity>(eagerLoadContext);
+            var includeNavigationPaths = CachedIncludeEngine.BuildIncludesForRootType<TEntity>(eagerLoadContext);
             foreach (var item in includeNavigationPaths) { Console.WriteLine(item); }
             return includeNavigationPaths.Aggregate(originalQuery, (current, navigationPath) => current.Include(navigationPath));
         }

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace EfEagerLoad.IncludeStrategy
+namespace EfEagerLoad.IncludeStrategies
 {
     public class AllNavigationsIncludeStrategy : IncludeStrategy
     {

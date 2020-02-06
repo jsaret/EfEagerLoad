@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using EfEagerLoad.Common;
-using EfEagerLoad.IncludeStrategy;
+using EfEagerLoad.Engine;
+using EfEagerLoad.IncludeStrategies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 

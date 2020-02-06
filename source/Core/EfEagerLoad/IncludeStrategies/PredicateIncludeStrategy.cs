@@ -1,7 +1,7 @@
 ﻿using System;
 using EfEagerLoad.Common;
 
-namespace EfEagerLoad.IncludeStrategy
+namespace EfEagerLoad.IncludeStrategies
 {
     public class PredicateIncludeStrategy : IncludeStrategy
     {

@@ -6,7 +6,7 @@ using System.Reflection;
 using EfEagerLoad.Attributes;
 using Microsoft.EntityFrameworkCore;
 
-namespace EfEagerLoad.IncludeStrategy
+namespace EfEagerLoad.IncludeStrategies
 {
     public class EagerLoadAttributeIncludeStrategy : IncludeStrategy
     {

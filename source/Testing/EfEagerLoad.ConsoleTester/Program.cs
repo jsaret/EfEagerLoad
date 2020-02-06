@@ -32,17 +32,17 @@ namespace EfEagerLoad.ConsoleTester
 
         public static object Perf()
         {
+            //var bookQuery = new Book[0].AsQueryable();
+            //return bookQuery.AsQueryable().EagerLoad(_testDbContext, IncludeStrategy.IncludeExecution.NoCache).ToArray();
+
+
+            var item = new object();
             var bookQuery = new Book[0].AsQueryable();
-            return bookQuery.AsQueryable().EagerLoad(_testDbContext, IncludeStrategy.IncludeExecution.NoCache).ToArray();
-
-
-            //var item = new object();
-            //Enumerable.Range(0, 50000).ForEach(_ =>
-            //{
-            //    var bookQuery = new Book[0].AsQueryable();
-            //    item = bookQuery.EagerLoad(_testDbContext, true, "Test").ToArray();
-            //});
-            //return item;
+            Enumerable.Range(0, 500000).ForEach(_ =>
+            {
+                item = bookQuery.EagerLoad(_testDbContext, true, "Test").ToArray();
+            });
+            return item;
         }
 
         public static async Task Run()

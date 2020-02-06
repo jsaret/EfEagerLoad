@@ -1,6 +1,7 @@
 ﻿using System;
+using EfEagerLoad.Engine;
 
-namespace EfEagerLoad.IncludeStrategy
+namespace EfEagerLoad.IncludeStrategies
 {
     public abstract class IncludeStrategy : IIncludeStrategy
     {

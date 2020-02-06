@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EfEagerLoad.IncludeStrategy
+namespace EfEagerLoad.Engine
 {
     public interface IIncludeStrategy
     {

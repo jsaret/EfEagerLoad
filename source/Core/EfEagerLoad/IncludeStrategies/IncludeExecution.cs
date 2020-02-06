@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EfEagerLoad.IncludeStrategy
+namespace EfEagerLoad.IncludeStrategies
 {
     public enum IncludeExecution
     {

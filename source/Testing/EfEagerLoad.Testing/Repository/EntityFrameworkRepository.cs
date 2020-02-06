@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EfEagerLoad.Extensions;
-using EfEagerLoad.IncludeStrategy;
+using EfEagerLoad.IncludeStrategies;
 using EfEagerLoad.Testing.Model;
 using Microsoft.EntityFrameworkCore;
 

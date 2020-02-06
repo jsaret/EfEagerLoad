@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using EfEagerLoad.IncludeStrategy;
+using EfEagerLoad.IncludeStrategies;
 using Microsoft.EntityFrameworkCore;
 
 namespace EfEagerLoad.Extensions

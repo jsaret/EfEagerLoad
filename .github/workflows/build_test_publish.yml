@@ -1,13 +1,10 @@
-name: Master Build Test Publish
+name: Build_Test_Publish
 
-on:
-  push:
-    branches:
-      - master
+on: [push]
 
 jobs:
-  build:
 
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,14 +13,21 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Build with dotnet
+    - name: Build
       run: dotnet build source/EfEagerLoad.sln --configuration Release
-    - name: publish on version change
+    - name: Test
+      run: dotnet build source/EfEagerLoad.sln --configuration Release
+
+  release:
+    if: ${{ github.ref == 'master' }}
+    needs: build
+    - name: Publish
       uses: rohith/publish-nuget@v2
       with:
         PROJECT_FILE_PATH: source/Core/EfEagerLoad/EfEagerLoad.csproj # Relative to repository root
+        # NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+        TAG_COMMIT: true
+        TAG_FORMAT: Publish_V*
         # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
         # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
-        # TAG_COMMIT: true # Flag to enable / disalge git tagging
-        # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-        # NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+        # 

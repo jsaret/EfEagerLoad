@@ -20,17 +20,17 @@ namespace EfEagerLoad.Testing.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<IList<TEntity>> GetByIdAlwaysEagerLoadWithCache<TEntity>(Guid id) where TEntity : class, IEntity
+        public async Task<IList<TEntity>> GetByIdAlwaysEagerLoadWithCache<TEntity>(long id) where TEntity : class, IEntity
         {
             return await _dbContext.Set<TEntity>().Where(entity => entity.Id == id).EagerLoad(_dbContext)
                                     .ToListAsync();
         }
 
-        public async Task<IList<TEntity>> GetById<TEntity>(Guid id, bool eagerLoad = true) where TEntity : class, IEntity
+        public async Task<TEntity> GetById<TEntity>(long id, bool eagerLoad = true) where TEntity : class, IEntity
         {
             return await _dbContext.Set<TEntity>().Where(entity => entity.Id == id)
                                 .EagerLoad(_dbContext, (eagerLoad ? IncludeExecution.Cached : IncludeExecution.Skip))
-                                .ToListAsync();
+                                .FirstOrDefaultAsync();
         }
 
         public async Task<IList<TEntity>> GetAll<TEntity>(bool eagerLoad = true) where TEntity : class

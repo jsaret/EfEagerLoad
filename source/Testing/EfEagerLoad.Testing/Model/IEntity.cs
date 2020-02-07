@@ -4,6 +4,6 @@ namespace EfEagerLoad.Testing.Model
 {
     public interface IEntity
     {
-        Guid Id { get; set; }
+        long Id { get; set; }
     }
 }

@@ -5,9 +5,13 @@ VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{6D43E567-F935-41FF-94FA-241E9B585BCA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{31C14B97-36F7-4D01-9B4A-E15A5373D709}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad", "Core\EfEagerLoad\EfEagerLoad.csproj", "{68FDED66-92F9-4410-B1A8-FFE4F9DE9705}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Tests", "Core\EfEagerLoad.Tests\EfEagerLoad.Tests.csproj", "{595C6058-84C7-4D44-AEDF-C0567B1CEF63}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.ConsoleTester", "Testing\EfEagerLoad.ConsoleTester\EfEagerLoad.ConsoleTester.csproj", "{AE280F40-39A0-4352-AC72-E4B61898A984}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{769D7A38-D520-430C-B689-463064BCA3E5}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,9 +24,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{DE2BFEAD-84E6-45F0-AFF4-BF79DFD953C6}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		..\.github\workflows\build.yml = ..\.github\workflows\build.yml
-		..\.github\workflows\build_master.yml = ..\.github\workflows\build_master.yml
+		..\.github\workflows\build_test_publish.yml = ..\.github\workflows\build_test_publish.yml
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Benchmarks", "Testing\EfEagerLoad.Benchmarks\EfEagerLoad.Benchmarks.csproj", "{D158F3D3-B620-4F45-8209-14029C09AB25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Testing", "Testing\EfEagerLoad.Testing\EfEagerLoad.Testing.csproj", "{B328E249-C343-45CC-8D96-91AE71FD10DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +45,18 @@ Global
 		{595C6058-84C7-4D44-AEDF-C0567B1CEF63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{595C6058-84C7-4D44-AEDF-C0567B1CEF63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{595C6058-84C7-4D44-AEDF-C0567B1CEF63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE280F40-39A0-4352-AC72-E4B61898A984}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE280F40-39A0-4352-AC72-E4B61898A984}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE280F40-39A0-4352-AC72-E4B61898A984}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE280F40-39A0-4352-AC72-E4B61898A984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D158F3D3-B620-4F45-8209-14029C09AB25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D158F3D3-B620-4F45-8209-14029C09AB25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D158F3D3-B620-4F45-8209-14029C09AB25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D158F3D3-B620-4F45-8209-14029C09AB25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,7 +64,10 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{68FDED66-92F9-4410-B1A8-FFE4F9DE9705} = {6D43E567-F935-41FF-94FA-241E9B585BCA}
 		{595C6058-84C7-4D44-AEDF-C0567B1CEF63} = {6D43E567-F935-41FF-94FA-241E9B585BCA}
+		{AE280F40-39A0-4352-AC72-E4B61898A984} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
 		{769D7A38-D520-430C-B689-463064BCA3E5} = {DE2BFEAD-84E6-45F0-AFF4-BF79DFD953C6}
+		{D158F3D3-B620-4F45-8209-14029C09AB25} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
+		{B328E249-C343-45CC-8D96-91AE71FD10DB} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D04A5152-78E1-4E33-B5EE-7871CF3724FF}

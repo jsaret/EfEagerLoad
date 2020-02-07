@@ -1,8 +1,7 @@
 name: Build and Test
 
-on: [push]
-
-push:
+on:
+  push:
     branches:
       - development
 

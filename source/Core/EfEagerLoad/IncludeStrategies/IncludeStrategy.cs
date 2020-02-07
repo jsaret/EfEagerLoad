@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using EfEagerLoad.Common;
 using EfEagerLoad.Engine;
 
@@ -6,14 +7,22 @@ namespace EfEagerLoad.IncludeStrategies
 {
     public abstract class IncludeStrategy : IIncludeStrategy
     {
-        public abstract bool ShouldIncludeNavigation(EagerLoadContext context);
-        public bool ShouldIgnoreNavigationPath(EagerLoadContext context, string path)
+        public abstract bool ShouldIncludeNavigation(EagerLoadContext context, string navigationPath);
+
+        public void FilterNavigationPathsBeforeInclude(EagerLoadContext context)
         {
-            return context.NavigationPathsToIgnore.Contains(path);
+            foreach (var navigationPath in context.NavigationPathsFoundToInclude.ToArray())
+            {
+                if (context.NavigationPathsToIgnore.Any(nav => navigationPath.StartsWith(nav)))
+                {
+                    context.NavigationPathsFoundToInclude.Remove(navigationPath);
+                }
+            }
         }
 
-        public void PreBuildExecute(EagerLoadContext context)
+        public void ExecuteBeforeInclude(EagerLoadContext context)
         {
+            //foreach (var item in context.NavigationPathsFoundToInclude) { Console.WriteLine(item); }
         }
     }
 }

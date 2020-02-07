@@ -5,7 +5,7 @@ namespace EfEagerLoad.IncludeStrategies
 {
     public class AllNavigationsIncludeStrategy : IncludeStrategy
     {
-        public override bool ShouldIncludeNavigation(EagerLoadContext context)
+        public override bool ShouldIncludeNavigation(EagerLoadContext context, string navigationPath)
         {
             return true;
         }

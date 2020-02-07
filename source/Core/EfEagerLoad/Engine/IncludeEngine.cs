@@ -3,9 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using EfEagerLoad.Common;
-using EfEagerLoad.IncludeStrategies;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace EfEagerLoad.Engine
 {
@@ -14,7 +12,7 @@ namespace EfEagerLoad.Engine
         private static readonly IncludeFinder CachedIncludeBuilder = new IncludeFinder();
 
         private readonly IncludeFinder _includeFinder;
-        private static readonly ConcurrentDictionary<Type, IEnumerable<string>> CachedIncludeNavigationPaths = new ConcurrentDictionary<Type, IEnumerable<string>>();
+        private static readonly ConcurrentDictionary<Type, IList<string>> CachedIncludeNavigationPaths = new ConcurrentDictionary<Type, IList<string>>();
 
         public IncludeEngine() : this(CachedIncludeBuilder) { }
 
@@ -35,7 +33,7 @@ namespace EfEagerLoad.Engine
                 context.RootType = typeof(TEntity);
             }
 
-            IEnumerable<string> includeStatements = new string[0];
+            IList<string> includeStatements = new string[0];
 
             switch (context.IncludeExecution)
             {
@@ -58,7 +56,14 @@ namespace EfEagerLoad.Engine
                 }
             }
 
-            //foreach (var item in includeStatements) { Console.WriteLine(item); }
+            if (context.NavigationPathsFoundToInclude.Count == 0)
+            {
+                context.NavigationPathsFoundToInclude = new List<string>(includeStatements);
+            }
+
+            context.IncludeStrategy.FilterNavigationPathsBeforeInclude(context);
+            context.IncludeStrategy.ExecuteBeforeInclude(context);
+
             return includeStatements.Aggregate(query, (current, navigationPath) => current.Include(navigationPath));
         }
     }

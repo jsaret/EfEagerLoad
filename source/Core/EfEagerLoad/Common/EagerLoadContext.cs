@@ -42,7 +42,7 @@ namespace EfEagerLoad.Common
 
         public IncludeExecution IncludeExecution { get; }
 
-        public IList<string> NavigationPathsFoundToInclude { get; } = new List<string>();
+        public IList<string> NavigationPathsFoundToInclude { get; internal set; } = new List<string>();
 
         public void AddTypeVisited(Type visitedType) => _typesVisited.Add(visitedType);
 

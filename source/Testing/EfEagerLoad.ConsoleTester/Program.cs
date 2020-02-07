@@ -19,15 +19,15 @@ namespace EfEagerLoad.ConsoleTester
 
         public static async Task Main(string[] args)
         {
-            var value = Perf();
+            //var value = Perf();
 
-            if (value == null)
-            {
-                Console.WriteLine();
-            }
+            //if (value == null)
+            //{
+            //    Console.WriteLine();
+            //}
 
-            //Func<Task> runFunc = Run;
-            //await runFunc.RunInConsole();
+            Func<Task> runFunc = Run;
+            await runFunc.RunInConsole();
         }
 
         public static object Perf()
@@ -51,12 +51,12 @@ namespace EfEagerLoad.ConsoleTester
             var testRunner = serviceProvider.GetRequiredService<TestRunner>();
 
             //await testRunner.RunTest1();
-            //await testRunner.RunTest2();
+            await testRunner.RunTest2();
             //await testRunner.RunTest3();
             //await testRunner.RunTest4();
 
             //await testRunner.RunTest5();
-            await testRunner.RunTest6();
+            //await testRunner.RunTest6();
         }
 
         private static async Task<IServiceProvider> SetupServices()

@@ -10,36 +10,33 @@ namespace EfEagerLoad.Engine
 {
     public class IncludeFinder
     {
-        private static readonly ConcurrentDictionary<Type, IEnumerable<INavigation>> CachedTypeNavigations = new ConcurrentDictionary<Type, IEnumerable<INavigation>>();
+        private static readonly ConcurrentDictionary<Type, INavigation[]> CachedTypeNavigations = new ConcurrentDictionary<Type, INavigation[]>();
         
-        public IEnumerable<string> BuildIncludesForRootType(EagerLoadContext context)
+        public IList<string> BuildIncludesForRootType(EagerLoadContext context)
         {
             BuildIncludesForType(context, context.RootType, string.Empty);
             return context.NavigationPathsFoundToInclude;
         }
 
-        private static void BuildIncludesForType(EagerLoadContext context, Type type, string prefix)
+        private static void BuildIncludesForType(EagerLoadContext context, Type type, string navigationPath)
         {
             context.AddTypeVisited(type);
             var navigations = CachedTypeNavigations.GetOrAdd(type, typeToFind => 
                         context.DbContext.Model.FindEntityType(type).GetNavigations().ToArray());
-            navigations = navigations.Where(currentNavigation => context.IncludeStrategy.ShouldIncludeNavigation(context))
+            navigations = navigations.Where(currentNavigation => context.IncludeStrategy.ShouldIncludeNavigation(context, navigationPath))
                                     .ToArray();
 
             foreach (var navigation in navigations)
             {
-                var navigationName = $"{prefix}{navigation.Name}";
-
-                if (context.IncludeStrategy.ShouldIgnoreNavigationPath(context, navigationName)) { continue; }
+                var navigationName = (context.NavigationPath.Count == 0) ? $"{navigation.Name}" : $"{navigationPath}.{navigation.Name}";
 
                 context.CurrentPath = navigationName;
                 context.SetCurrentNavigation(navigation);
                 context.NavigationPathsFoundToInclude.Add(navigationName);
-                context.NavigationPathsToIgnore.Add(navigationName);
 
                 var typeToExamine = navigation.IsCollection() ? navigation.GetTargetType().ClrType : navigation.ClrType;
 
-                BuildIncludesForType(context, typeToExamine, $"{navigationName}.");
+                BuildIncludesForType(context, typeToExamine, navigationName);
                 context.RemoveCurrentNavigation();
             }
         }

@@ -13,7 +13,7 @@ namespace EfEagerLoad.IncludeStrategies
     {
         private static readonly ConcurrentDictionary<PropertyInfo, EagerLoadAttribute> EagerLoadAttributeCache = new ConcurrentDictionary<PropertyInfo, EagerLoadAttribute>();
 
-        public override bool ShouldIncludeNavigation(EagerLoadContext context)
+        public override bool ShouldIncludeNavigation(EagerLoadContext context, string navigationPath)
         {
             if (context.CurrentNavigation == null) { return true; }
 

@@ -5,17 +5,17 @@ namespace EfEagerLoad.IncludeStrategies
 {
     public class PredicateIncludeStrategy : IncludeStrategy
     {
-        private readonly Predicate<EagerLoadContext> _strategy;
+        private readonly Func<EagerLoadContext, string, bool> _strategy;
 
-        public PredicateIncludeStrategy(Predicate<EagerLoadContext> strategy)
+        public PredicateIncludeStrategy(Func<EagerLoadContext, string, bool> strategy)
         {
             Guard.IsNotNull(nameof(strategy), strategy);
             _strategy = strategy;
         }
 
-        public override bool ShouldIncludeNavigation(EagerLoadContext context)
+        public override bool ShouldIncludeNavigation(EagerLoadContext context, string navigationPath)
         {
-            return _strategy(context);
+            return _strategy(context, navigationPath);
         }
     }
 }

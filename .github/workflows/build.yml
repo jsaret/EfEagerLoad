@@ -1,6 +1,10 @@
-name: .NET Core
+name: Build and Test
 
 on: [push]
+
+push:
+    branches:
+      - development
 
 jobs:
   build:

@@ -1,4 +1,4 @@
-name: Build Test Publish (Master)
+name: Master Build Test Publish
 
 on:
   push:

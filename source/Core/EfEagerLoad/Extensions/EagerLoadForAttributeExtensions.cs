@@ -8,9 +8,6 @@ namespace EfEagerLoad.Extensions
 {
     public static class EagerLoadForAttributeExtensions
     {
-
-        private static readonly AllNavigationsIncludeStrategy CachedNoShadowNavigationIncludeStrategy = new AllNavigationsIncludeStrategy();
-
         public static IQueryable<TEntity> EagerLoadForAttribute<TEntity, TAttribute>(this IQueryable<TEntity> query, DbContext dbContext, 
                                                                                 params string[] navigationPropertiesToIgnore)
                                                                                 where TEntity : class
@@ -33,7 +30,7 @@ namespace EfEagerLoad.Extensions
                                                                                 where TEntity : class
                                                                                 where TAttribute : Attribute
         {
-            return query.EagerLoadMatching(dbContext, CachedNoShadowNavigationIncludeStrategy, includeExecution, navigationPropertiesToIgnore);
+            return query.EagerLoadMatching(dbContext, new AttributeExistsIncludeStrategy<TAttribute>(), includeExecution, navigationPropertiesToIgnore);
         }
 
     }

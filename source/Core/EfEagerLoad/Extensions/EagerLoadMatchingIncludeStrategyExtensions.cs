@@ -2,7 +2,6 @@
 using System.Linq;
 using EfEagerLoad.Common;
 using EfEagerLoad.Engine;
-using EfEagerLoad.IncludeStrategies;
 using Microsoft.EntityFrameworkCore;
 
 namespace EfEagerLoad.Extensions

@@ -20,7 +20,7 @@ jobs:
 
   release:
     needs: build
-    if: ${{ github.ref == 'master' }}
+    if: github.ref == 'refs/heads/master'
     - name: Publish
       uses: rohith/publish-nuget@v2
       with:

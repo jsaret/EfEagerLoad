@@ -19,6 +19,7 @@ jobs:
       run: dotnet build source/EfEagerLoad.sln --configuration Release
 
   release:
+    needs: build
     if: ${{ github.ref == 'master' }}
     - name: Publish
       uses: rohith/publish-nuget@v2

@@ -35,7 +35,7 @@ namespace EfEagerLoad.IncludeStrategies
 
         private static bool CanTypeBeLazyLoadedBasedOnAllowedLimit(EagerLoadContext context, EagerLoadAttribute eagerLoadAttribute)
         {
-            if (context.TypesVisited.Count == 1) { return true; }
+            if (context.TypesVisited.Count() == 1) { return true; }
 
             var currentType = typeof(IEnumerable).IsAssignableFrom(context.CurrentNavigation?.ClrType) ? context.CurrentNavigation?.GetTargetType().ClrType :
                 context.CurrentNavigation?.ClrType;

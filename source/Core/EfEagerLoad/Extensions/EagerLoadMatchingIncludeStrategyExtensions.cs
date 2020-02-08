@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using EfEagerLoad.Common;
 using EfEagerLoad.Engine;
 using Microsoft.EntityFrameworkCore;
@@ -27,9 +28,16 @@ namespace EfEagerLoad.Extensions
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, IIncludeStrategy includeStrategy, 
                                         IncludeExecution includeExecution, params string[] navigationPropertiesToIgnore) where TEntity : class
         {
-            var context = new EagerLoadContext(dbContext, includeStrategy,navigationPropertiesToIgnore, includeExecution, typeof(TEntity));
+            var context = new EagerLoadContext(dbContext, includeStrategy, navigationPropertiesToIgnore, includeExecution, typeof(TEntity));
             return query.EagerLoadWithContext(context);
         }
+
+        //public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, IIncludeStrategy includeStrategy,
+        //    IncludeExecution includeExecution, params Expression<Func<TEntity, object>>[] navigationPathExpressionsToIgnore) where TEntity : class
+        //{
+        //    var context = new EagerLoadContext(dbContext, includeStrategy, null, navigationPathExpressionsToIgnore, includeExecution, typeof(TEntity));
+        //    return query.EagerLoadWithContext(context);
+        //}
 
     }
 }

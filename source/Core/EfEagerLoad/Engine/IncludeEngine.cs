@@ -56,9 +56,9 @@ namespace EfEagerLoad.Engine
                 }
             }
 
-            if (context.NavigationPathsFoundToInclude.Count == 0)
+            if (context.NavigationPathsToInclude.Count == 0)
             {
-                context.NavigationPathsFoundToInclude = new List<string>(includeStatements);
+                context.NavigationPathsToInclude = new List<string>(includeStatements);
             }
 
             context.IncludeStrategy.FilterNavigationPathsBeforeInclude(context);

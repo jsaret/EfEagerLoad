@@ -22,7 +22,7 @@ jobs:
 
     - name: Publish
       if: ${{ github.ref }} == 'refs/heads/master'
-    - uses: rohith/publish-nuget@v2
+      uses: rohith/publish-nuget@v2
       with:
         PROJECT_FILE_PATH: source/Core/EfEagerLoad/EfEagerLoad.csproj # Relative to repository root
         # NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key

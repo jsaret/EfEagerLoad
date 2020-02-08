@@ -19,3 +19,25 @@ jobs:
 
     - name: Test
       run: dotnet test source/EfEagerLoad.sln --configuration Release
+
+  publish:
+    if: ${{ github.ref }} == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: build    
+    steps:
+    - name: Checkout
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+    - uses: actions/setup-dotnet@v1
+        with:
+        dotnet-version: 3.1.101
+    - name: Publish
+    - uses: rohith/publish-nuget@v2
+        with:
+        PROJECT_FILE_PATH: source/Core/EfEagerLoad/EfEagerLoad.csproj # Relative to repository root
+        # NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+        TAG_COMMIT: true
+        TAG_FORMAT: Publish_V*
+        # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
+        # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
+        # 

@@ -11,7 +11,7 @@ namespace EfEagerLoad.Common
         private readonly Stack<INavigation> _navigationStack = new Stack<INavigation>();
         private readonly List<Type> _typesVisited = new List<Type>();
 
-        public EagerLoadContext(DbContext dbContext, IIncludeStrategy includeStrategy, IList<string> navigationPropertiesToIgnore, 
+        public EagerLoadContext(DbContext dbContext, IIncludeStrategy includeStrategy, IList<string> navigationPathsToIgnore = null,
                                 IncludeExecution includeExecution = IncludeExecution.Cached, Type rooType = null)
         {
             Guard.IsNotNull(nameof(dbContext), dbContext);
@@ -19,7 +19,7 @@ namespace EfEagerLoad.Common
 
             RootType = rooType;
             DbContext = dbContext;
-            NavigationPathsToIgnore =  new List<string>(navigationPropertiesToIgnore ?? new string[0]);
+            NavigationPathsToIgnore =  new List<string>(navigationPathsToIgnore ?? new string[0]);
             IncludeStrategy = includeStrategy;
             IncludeExecution = includeExecution;
         }
@@ -28,23 +28,23 @@ namespace EfEagerLoad.Common
 
          public INavigation CurrentNavigation { get; private set; }
 
-         public string CurrentPath { get; internal set; }
+         public string NavigationPath { get; internal set; }
 
-        public IReadOnlyList<INavigation> NavigationPath => _navigationStack.ToArray();
+        public IEnumerable<INavigation> NavigationStack => _navigationStack;
 
         public DbContext DbContext { get; }
 
         public IList<string> NavigationPathsToIgnore { get; }
 
-        public IReadOnlyList<Type> TypesVisited => _typesVisited;
+        public IEnumerable<Type> TypesVisited => _typesVisited;
 
         public IIncludeStrategy IncludeStrategy { get; set; }
 
         public IncludeExecution IncludeExecution { get; }
 
-        public IList<string> NavigationPathsFoundToInclude { get; internal set; } = new List<string>();
+        public IList<string> NavigationPathsToInclude { get; internal set; } = new List<string>();
 
-        public void AddTypeVisited(Type visitedType) => _typesVisited.Add(visitedType);
+        internal void AddTypeVisited(Type visitedType) => _typesVisited.Add(visitedType);
 
         internal void SetCurrentNavigation(INavigation navigation)
         {

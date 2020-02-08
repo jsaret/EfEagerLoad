@@ -11,11 +11,11 @@ namespace EfEagerLoad.IncludeStrategies
 
         public void FilterNavigationPathsBeforeInclude(EagerLoadContext context)
         {
-            foreach (var navigationPath in context.NavigationPathsFoundToInclude.ToArray())
+            foreach (var navigationPath in context.NavigationPathsToInclude.ToArray())
             {
                 if (context.NavigationPathsToIgnore.Any(nav => navigationPath.StartsWith(nav)))
                 {
-                    context.NavigationPathsFoundToInclude.Remove(navigationPath);
+                    context.NavigationPathsToInclude.Remove(navigationPath);
                 }
             }
         }

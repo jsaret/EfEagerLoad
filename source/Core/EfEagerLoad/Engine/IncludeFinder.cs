@@ -15,7 +15,7 @@ namespace EfEagerLoad.Engine
         public IList<string> BuildIncludesForRootType(EagerLoadContext context)
         {
             BuildIncludesForType(context, context.RootType, string.Empty);
-            return context.NavigationPathsFoundToInclude;
+            return context.NavigationPathsToInclude;
         }
 
         private static void BuildIncludesForType(EagerLoadContext context, Type type, string navigationPath)
@@ -28,11 +28,11 @@ namespace EfEagerLoad.Engine
 
             foreach (var navigation in navigations)
             {
-                var navigationName = (context.NavigationPath.Count == 0) ? $"{navigation.Name}" : $"{navigationPath}.{navigation.Name}";
+                var navigationName = (!context.NavigationStack.Any()) ? $"{navigation.Name}" : $"{navigationPath}.{navigation.Name}";
 
-                context.CurrentPath = navigationName;
+                context.NavigationPath = navigationName;
                 context.SetCurrentNavigation(navigation);
-                context.NavigationPathsFoundToInclude.Add(navigationName);
+                context.NavigationPathsToInclude.Add(navigationName);
 
                 var typeToExamine = navigation.IsCollection() ? navigation.GetTargetType().ClrType : navigation.ClrType;
 

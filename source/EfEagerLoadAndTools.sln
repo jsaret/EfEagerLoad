@@ -24,7 +24,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{DE2BFEAD-84E6-45F0-AFF4-BF79DFD953C6}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		..\.github\workflows\build_test_publish.yml = ..\.github\workflows\build_test_publish.yml
+		..\.github\workflows\build.yml = ..\.github\workflows\build.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Benchmarks", "Testing\EfEagerLoad.Benchmarks\EfEagerLoad.Benchmarks.csproj", "{D158F3D3-B620-4F45-8209-14029C09AB25}"

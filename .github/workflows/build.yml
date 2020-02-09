@@ -39,4 +39,4 @@ jobs:
         PROJECT_FILE_PATH: source/Core/EfEagerLoad/EfEagerLoad.csproj # Relative to repository root
         # NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
         TAG_COMMIT: true
-        TAG_FORMAT: Publish_V*
+        TAG_FORMAT: Version-*

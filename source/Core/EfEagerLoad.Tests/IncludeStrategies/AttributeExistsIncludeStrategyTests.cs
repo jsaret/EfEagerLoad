@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using EfEagerLoad.Attributes;
 using EfEagerLoad.Common;
 using EfEagerLoad.IncludeStrategies;
+using EfEagerLoad.Tests.Testing.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
@@ -30,6 +31,8 @@ namespace EfEagerLoad.Tests.IncludeStrategies
             var strategy = new AttributeExistsIncludeStrategy<EagerLoadAttribute>();
             var context = new EagerLoadContext(new Mock<DbContext>().Object, strategy);
             var navigationMock = new Mock<INavigation>();
+            navigationMock.Setup(nav => nav.Name).Returns(nameof(Book));
+
             context.SetCurrentNavigation(navigationMock.Object);
 
             navigationMock.Setup(nav => nav.PropertyInfo)
@@ -47,6 +50,8 @@ namespace EfEagerLoad.Tests.IncludeStrategies
             var strategy = new AttributeExistsIncludeStrategy<EagerLoadAttribute>();
             var context = new EagerLoadContext(new Mock<DbContext>().Object, strategy);
             var navigationMock = new Mock<INavigation>();
+            navigationMock.Setup(nav => nav.Name).Returns(nameof(Book));
+            
             context.SetCurrentNavigation(navigationMock.Object);
 
             navigationMock.Setup(nav => nav.PropertyInfo)

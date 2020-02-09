@@ -13,7 +13,7 @@ namespace EfEagerLoad.Common
         private static readonly AsyncLocal<IServiceProvider> ThreadLocalServiceProvider = new AsyncLocal<IServiceProvider>();
 
         private readonly Stack<INavigation> _navigationPath = new Stack<INavigation>();
-        private readonly List<Type> _typesVisited = new List<Type>();
+        private char[] _currentIncludePath = string.Empty.ToCharArray();
 
         public EagerLoadContext(DbContext dbContext, IIncludeStrategy includeStrategy, IList<string> includePathsToIgnore = null,
                                 IncludeExecution includeExecution = IncludeExecution.Cached, Type rooType = null)
@@ -30,20 +30,15 @@ namespace EfEagerLoad.Common
 
         public Type RootType { get; internal set; }
 
-         public INavigation CurrentNavigation { get; private set; }
+        public INavigation CurrentNavigation => (_navigationPath.Any()) ? _navigationPath.Peek() : null;
 
-         public string CurrentIncludePath
-         {
-             get
-             {
-                 if (CurrentNavigation == null) { return string.Empty; }
+        public string CurrentIncludePath => new string(_currentIncludePath);
 
-                 return (NavigationPath.Skip(1).Any()) ? $"{ParentIncludePath}.{CurrentNavigation.Name}" :
-                                                            $"{CurrentNavigation.Name}";
-             }
-         }
+        public ReadOnlySpan<char> CurrentIncludePathSpan => _currentIncludePath;
 
-         public string ParentIncludePath { get; internal set; }
+        public string ParentIncludePath => CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
+
+        public ReadOnlySpan<char> ParentIncludePathSpan => CurrentIncludePathSpan.GetParentIncludePathSpan();
 
 
         public IEnumerable<INavigation> NavigationPath => _navigationPath;
@@ -52,7 +47,7 @@ namespace EfEagerLoad.Common
 
         public IList<string> IncludePathsToIgnore { get; }
 
-        public IEnumerable<Type> TypesVisited => _typesVisited;
+        public IList<Type> TypesVisited => new List<Type>();
 
         public IIncludeStrategy IncludeStrategy { get; set; }
 
@@ -66,22 +61,23 @@ namespace EfEagerLoad.Common
             set => ThreadLocalServiceProvider.Value = value;
         }
 
-        internal void AddTypeVisited(Type visitedType) => _typesVisited.Add(visitedType);
-
         internal void SetCurrentNavigation(INavigation navigation)
         {
-            CurrentNavigation = navigation;
+            if(navigation == null) { return; }
+
             _navigationPath.Push(navigation);
+            _currentIncludePath = (NavigationPath.Skip(1).Any()) ? $"{CurrentIncludePath}.{CurrentNavigation.Name}".ToCharArray() :
+                                                                    CurrentNavigation.Name.ToCharArray();
         }
-
-        internal INavigation RemoveCurrentNavigation()
+        
+        internal void RemoveCurrentNavigation()
         {
-            if (_navigationPath.Count == 0) { return null; }
-            
-            var currentNavigationToRemove = _navigationPath.Pop();
-            CurrentNavigation = (_navigationPath.Count > 0) ? _navigationPath.Peek() : null;
-            return currentNavigationToRemove;
+            if (_navigationPath.Count == 0) { return; }
 
+            _navigationPath.Pop();
+            _currentIncludePath = (!NavigationPath.Skip(1).Any()) ? 
+                                    ((CurrentNavigation?.Name != null) ? CurrentNavigation?.Name.ToCharArray() : Array.Empty<char>()) :
+                                    ParentIncludePathSpan.ToArray();
         }
 
         public static void InitializeServiceProvider(IServiceProvider serviceProvider)

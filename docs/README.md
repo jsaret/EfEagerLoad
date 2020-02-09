@@ -1,10 +1,8 @@
-Master: ![Master](https://github.com/jsaret/EfEagerLoad/workflows/Build/badge.svg?branch=master)
-
-Development: ![Development](https://github.com/jsaret/EfEagerLoad/workflows/Build/badge.svg?branch=development)
+![Master](https://github.com/jsaret/EfEagerLoad/workflows/Build/badge.svg?branch=master)
 
 # EfEagerLoad
 
-###### (ConstructionSite.gif)
+###### (<PreReleaseConstructionSite.gif>)
 
 EfEagerLoad allows you to add eager loading to your Entities automatically with minimal setup.
 
@@ -29,7 +27,6 @@ ___
   - [Repository Pattern Integration](#Repository-Pattern-Integration)
   - [Controlling what gets Eager Loaded](#Controlling-what-gets-Eager-Loaded)
     - [Input Parameters](#Input-Parameters)
-      - [Execution and Caching](#Execution-and-Caching)
       - [Navigation Paths](#Filtering-Navigation-Paths)
     - [Built-in Attribute](#Built-in-Attribute)
     - [Custom Attribute](#Custom-Attribute)

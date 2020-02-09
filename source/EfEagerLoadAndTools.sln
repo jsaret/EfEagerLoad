@@ -15,7 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.ConsoleTester",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{769D7A38-D520-430C-B689-463064BCA3E5}"
 	ProjectSection(SolutionItems) = preProject
-		..\docs\CONTRIBUTING.md = ..\docs\CONTRIBUTING.md
 		..\LICENSE = ..\LICENSE
 		..\docs\README.md = ..\docs\README.md
 		..\docs\ToDo.md = ..\docs\ToDo.md

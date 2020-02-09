@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfEagerLoad.Common
 {
-    public static class NavigationExtensions
+    public static class EntityFrameworkExtensions
     {
         public static Type GetNavigationType(this INavigation navigation)
         {

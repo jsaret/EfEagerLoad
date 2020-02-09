@@ -2,11 +2,14 @@
 using System.Linq;
 using EfEagerLoad.Common;
 using EfEagerLoad.Engine;
+using Microsoft.Extensions.Logging;
 
 namespace EfEagerLoad.IncludeStrategies
 {
     public abstract class IncludeStrategy : IIncludeStrategy
     {
+        private const string IncludeLogMessage = "EfEagerLoad is about to include the following paths: ";
+
         public abstract bool ShouldIncludeNavigation(EagerLoadContext context);
 
         public virtual void FilterIncludePathsBeforeInclude(EagerLoadContext context)
@@ -22,7 +25,8 @@ namespace EfEagerLoad.IncludeStrategies
 
         public virtual void ExecuteBeforeInclude(EagerLoadContext context)
         {
-            //foreach (var item in context.NavigationPathsToInclude) { Console.WriteLine(item); } //or logger plugin etc...
+            var logger = context.ServiceProvider?.GetService(typeof(ILogger<IncludeEngine>)) as ILogger<IncludeEngine>;
+            logger?.LogDebug(IncludeLogMessage, context.IncludePathsToInclude);
         }
     }
 }

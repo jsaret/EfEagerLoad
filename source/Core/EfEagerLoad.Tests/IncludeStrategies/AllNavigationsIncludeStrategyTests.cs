@@ -1,6 +1,7 @@
 ﻿using System;
 using EfEagerLoad.Common;
 using EfEagerLoad.IncludeStrategies;
+using EfEagerLoad.Tests.Testing.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Moq;
@@ -16,6 +17,7 @@ namespace EfEagerLoad.Tests.IncludeStrategies
             var strategy = new AllNavigationsIncludeStrategy();
             var context = new EagerLoadContext(new Mock<DbContext>().Object, strategy);
             var navigationMock = new Mock<INavigation>();
+            navigationMock.Setup(nav => nav.Name).Returns(nameof(Book));
             context.SetCurrentNavigation(navigationMock.Object);
 
             Assert.True(strategy.ShouldIncludeNavigation(context));
@@ -27,7 +29,7 @@ namespace EfEagerLoad.Tests.IncludeStrategies
             var strategy = new AllNavigationsIncludeStrategy();
             var context = new EagerLoadContext(new Mock<DbContext>().Object, strategy);
             context.IncludePathsToIgnore.Add(nameof(INavigation));
-            context.ParentIncludePath = "";
+            //context.ParentIncludePath = "";
             var navigationMock = new Mock<INavigation>();
             navigationMock.Setup(nav => nav.Name).Returns(nameof(INavigation));
             context.SetCurrentNavigation(navigationMock.Object);

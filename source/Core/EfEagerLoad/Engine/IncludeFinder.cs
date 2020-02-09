@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using EfEagerLoad.Common;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfEagerLoad.Engine
 {
@@ -21,33 +19,32 @@ namespace EfEagerLoad.Engine
 
         public IList<string> BuildIncludePathsForRootType(EagerLoadContext context)
         {
-            BuildIncludesForType(context, context.RootType, string.Empty);
+            BuildIncludesForType(context, context.RootType);
             return context.IncludePathsToInclude;
         }
 
-        internal void BuildIncludesForType(EagerLoadContext context, Type type, string parentIncludePath)
+        private void BuildIncludesForType(EagerLoadContext context, Type type)
         {
-            context.AddTypeVisited(type);
-            context.ParentIncludePath = parentIncludePath;
-            var navigationToConsider = _navigationFinder.GetNavigationsForType(context, type);
-            var navigationToInclude = navigationToConsider.Where(navigation => ShouldIncludeNavigation(context, navigation));
+            context.TypesVisited.Add(type);
+            var navigationsToConsider = _navigationFinder.GetNavigationsForType(context, type);
 
-            foreach (var navigation in navigationToInclude)
+            foreach (var navigation in navigationsToConsider)
             {
                 context.SetCurrentNavigation(navigation);
+                if (context.IncludeStrategy.ShouldIncludeNavigation(context))
+                {
+                    context.RemoveCurrentNavigation();
+                    continue;
+                }
+
                 context.IncludePathsToInclude.Add(context.CurrentIncludePath);
-                BuildIncludesForType(context, navigation.GetNavigationType(), parentIncludePath);
+                BuildIncludesForType(context, navigation.GetNavigationType());
+                
                 context.RemoveCurrentNavigation();
             }
         }
 
-        private static bool ShouldIncludeNavigation(EagerLoadContext context, INavigation navigation)
-        {
-            context.SetCurrentNavigation(navigation);
-            var result = context.IncludeStrategy.ShouldIncludeNavigation(context);
-            context.RemoveCurrentNavigation();
-            return result;
-        }
+
 
     }
 }

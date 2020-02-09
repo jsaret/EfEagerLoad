@@ -1,0 +1,51 @@
+name: Build_for_Publish
+
+on:
+  push:
+    branches:
+      - master
+
+
+jobs:
+
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+
+    - name: Build
+      run: dotnet build source/EfEagerLoad.sln --configuration Release
+
+    - name: Test
+      run: dotnet test source/EfEagerLoad.sln --configuration Release
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: source/Core/EfEagerLoad/bin/Release/netcoreapp3.1/
+
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+
+    - name: Publish
+      uses: rohith/publish-nuget@v2
+      with:
+        PROJECT_FILE_PATH: source/Core/EfEagerLoad/EfEagerLoad.csproj # Relative to repository root
+        # NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+        TAG_COMMIT: true
+        TAG_FORMAT: Version-*

@@ -1,4 +1,4 @@
-name: Build_for_Publish
+name: Build for Publish
 
 on:
   push:

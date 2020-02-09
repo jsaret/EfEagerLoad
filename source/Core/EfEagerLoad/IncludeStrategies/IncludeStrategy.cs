@@ -7,22 +7,22 @@ namespace EfEagerLoad.IncludeStrategies
 {
     public abstract class IncludeStrategy : IIncludeStrategy
     {
-        public abstract bool ShouldIncludeNavigation(EagerLoadContext context, string navigationPath);
+        public abstract bool ShouldIncludeNavigation(EagerLoadContext context);
 
-        public void FilterNavigationPathsBeforeInclude(EagerLoadContext context)
+        public virtual void FilterIncludePathsBeforeInclude(EagerLoadContext context)
         {
-            foreach (var navigationPath in context.NavigationPathsToInclude.ToArray())
+            foreach (var navigationPath in context.IncludePathsToInclude.ToArray())
             {
-                if (context.NavigationPathsToIgnore.Any(nav => navigationPath.StartsWith(nav)))
+                if (context.IncludePathsToIgnore.Any(nav => navigationPath.StartsWith(nav)))
                 {
-                    context.NavigationPathsToInclude.Remove(navigationPath);
+                    context.IncludePathsToInclude.Remove(navigationPath);
                 }
             }
         }
 
-        public void ExecuteBeforeInclude(EagerLoadContext context)
+        public virtual void ExecuteBeforeInclude(EagerLoadContext context)
         {
-            //foreach (var item in context.NavigationPathsFoundToInclude) { Console.WriteLine(item); }
+            //foreach (var item in context.NavigationPathsToInclude) { Console.WriteLine(item); } //or logger plugin etc...
         }
     }
 }

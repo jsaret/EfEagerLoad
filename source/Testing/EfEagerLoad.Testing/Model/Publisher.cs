@@ -14,7 +14,7 @@ namespace EfEagerLoad.Testing.Model
 
         public string Name { get; set; }
 
-        [EagerLoad(onlyIfOnRoot:true)]
+        [EagerLoad(onlyOnRoot:true)]
         public virtual IList<Book> Books { get; set; } = new List<Book>();
     }
 }

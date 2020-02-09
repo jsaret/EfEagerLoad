@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
 using EfEagerLoad.Attributes;
 using EfEagerLoad.Common;
-using EfEagerLoad.Engine;
 using EfEagerLoad.IncludeStrategies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -39,11 +34,11 @@ namespace EfEagerLoad.Tests.IncludeStrategies
 
             navigationMock.Setup(nav => nav.PropertyInfo)
                 .Returns(GetType().GetProperty(nameof(NoAttributes)));
-            Assert.False(strategy.ShouldIncludeNavigation(context, string.Empty));
+            Assert.False(strategy.ShouldIncludeNavigation(context));
 
             navigationMock.Setup(nav => nav.PropertyInfo)
                 .Returns(GetType().GetProperty(nameof(NoEagerLoadAttributes)));
-            Assert.False(strategy.ShouldIncludeNavigation(context, string.Empty));
+            Assert.False(strategy.ShouldIncludeNavigation(context));
         }
 
         [Fact]
@@ -56,11 +51,11 @@ namespace EfEagerLoad.Tests.IncludeStrategies
 
             navigationMock.Setup(nav => nav.PropertyInfo)
                 .Returns(GetType().GetProperty(nameof(HasEagerLoadAttribute)));
-            Assert.True(strategy.ShouldIncludeNavigation(context, string.Empty));
+            Assert.True(strategy.ShouldIncludeNavigation(context));
 
             navigationMock.Setup(nav => nav.PropertyInfo)
                 .Returns(GetType().GetProperty(nameof(HasManyIncludingEagerLoadAttribute)));
-            Assert.True(strategy.ShouldIncludeNavigation(context, string.Empty));
+            Assert.True(strategy.ShouldIncludeNavigation(context));
         }
 
     }

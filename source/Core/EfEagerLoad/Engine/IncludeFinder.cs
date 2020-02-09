@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using EfEagerLoad.Common;
@@ -10,35 +9,46 @@ namespace EfEagerLoad.Engine
 {
     public class IncludeFinder
     {
-        private static readonly ConcurrentDictionary<Type, INavigation[]> CachedTypeNavigations = new ConcurrentDictionary<Type, INavigation[]>();
-        
-        public IList<string> BuildIncludesForRootType(EagerLoadContext context)
+        private static readonly NavigationFinder CachedNavigationFinder = new NavigationFinder();
+
+        private readonly NavigationFinder _navigationFinder;
+
+        public IncludeFinder() : this(CachedNavigationFinder) { }
+
+        public IncludeFinder(NavigationFinder navigationFinder)
         {
-            BuildIncludesForType(context, context.RootType, string.Empty);
-            return context.NavigationPathsToInclude;
+            _navigationFinder = navigationFinder;
         }
 
-        private static void BuildIncludesForType(EagerLoadContext context, Type type, string navigationPath)
+        public IList<string> BuildIncludePathsForRootType(EagerLoadContext context)
+        {
+            BuildIncludesForType(context, context.RootType, string.Empty);
+            return context.IncludePathsToInclude;
+        }
+
+        internal void BuildIncludesForType(EagerLoadContext context, Type type, string parentIncludePath)
         {
             context.AddTypeVisited(type);
-            var navigations = CachedTypeNavigations.GetOrAdd(type, typeToFind => 
-                        context.DbContext.Model.FindEntityType(type).GetNavigations().ToArray());
-            navigations = navigations.Where(currentNavigation => context.IncludeStrategy.ShouldIncludeNavigation(context, navigationPath))
-                                    .ToArray();
+            context.ParentIncludePath = parentIncludePath;
+            var navigationToConsider = _navigationFinder.GetNavigationsForType(context, type);
+            var navigationToInclude = navigationToConsider.Where(navigation => ShouldIncludeNavigation(context, navigation));
 
-            foreach (var navigation in navigations)
+            foreach (var navigation in navigationToInclude)
             {
-                var navigationName = (!context.NavigationStack.Any()) ? $"{navigation.Name}" : $"{navigationPath}.{navigation.Name}";
-
-                context.NavigationPath = navigationName;
+                context.IncludePathsToInclude.Add(context.CurrentIncludePath);
                 context.SetCurrentNavigation(navigation);
-                context.NavigationPathsToInclude.Add(navigationName);
-
-                var typeToExamine = navigation.IsCollection() ? navigation.GetTargetType().ClrType : navigation.ClrType;
-
-                BuildIncludesForType(context, typeToExamine, navigationName);
+                BuildIncludesForType(context, navigation.GetNavigationType(), parentIncludePath);
                 context.RemoveCurrentNavigation();
             }
         }
+
+        private static bool ShouldIncludeNavigation(EagerLoadContext context, INavigation navigation)
+        {
+            context.SetCurrentNavigation(navigation);
+            var result = context.IncludeStrategy.ShouldIncludeNavigation(context);
+            context.RemoveCurrentNavigation();
+            return result;
+        }
+
     }
 }

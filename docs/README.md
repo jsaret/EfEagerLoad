@@ -1,8 +1,10 @@
-Master: ![Master](https://github.com/jsaret/EfEagerLoad/workflows/Build_Test_Publish/badge.svg?branch=master)
+Master: ![Master](https://github.com/jsaret/EfEagerLoad/workflows/build_test/badge.svg?branch=master)
 
-Development: ![Development](ttps://github.com/jsaret/EfEagerLoad/workflows/Build_Test_Publish/badge.svg?branch=development)
+Development: ![Development](https://github.com/jsaret/EfEagerLoad/workflows/build_test/badge.svg?branch=development)
 
 # EfEagerLoad
+
+###### (ConstructionSite.gif)
 
 EfEagerLoad allows you to add eager loading to your Entities automatically with minimal setup.
 
@@ -20,46 +22,54 @@ ___
 
 ## Contents
 - [License](#license)
-- [Getting Started](#Getting-Started)
+- [Why use EfEagerLoader](#Why-use-EfEagerLoader)
+- [Usage](#Usage)
   - [Setup](#Setup)
-  - [Usage](#Usage)
-    - [Integrating with Entity Framework](#Integrating-with-Entity-Framework)
-    - [Repository Integration](#Repository-Integration)
-    - [Controlling what gets Eager Loaded](#Controlling-what-gets-Eager-Loaded)
-      - [Built-in Attribute](#Built-in-Attribute)
-      - [Custom Attribute](#Custom-Attribute)
-      - [Automatically](#Automatically)
-      - [Functions](#Functions)
-      - [Custom Strategy](#CustomStrategy)
-      - [EagerLoadContext](#EagerLoadContext)
-    - [Execution and Caching](#Execution-and-Caching)
+  - [Entity Framework Integration](#Entity-Framework-Integrating)
+  - [Repository Pattern Integration](#Repository-Pattern-Integration)
+  - [Controlling what gets Eager Loaded](#Controlling-what-gets-Eager-Loaded)
+    - [Input Parameters](#Input-Parameters)
+      - [Execution and Caching](#Execution-and-Caching)
+      - [Navigation Paths](#Filtering-Navigation-Paths)
+    - [Built-in Attribute](#Built-in-Attribute)
+    - [Custom Attribute](#Custom-Attribute)
+    - [Automatically](#Automatically)
+    - [Functions](#Functions)
+    - [Custom Strategy](#CustomStrategy)
+    - [EagerLoadContext](#EagerLoadContext)
+  - [Advanced Usage](#Advanced-Usage)
+    - [Input Parameters](#Input-Parameters)
+      - [Execution and Caching](#Execution-and-Caching)
+  - [Execution and Caching](#Execution-and-Caching)
+  - [Extending](#Development)
+  - [Here be Dragons](#Here-be-Dragons) 
+- [Development](#Development) 
 - [Contact](#Contact) 
 
 
 ## License
-See license details [here](/LICENSE.md).
 
-___
+This project is released under an MIT license. See further license details [here](/LICENSE.md).
 
-## Getting Started
+
+## Why use EfEagerLoader
+
+Entity Framework tends to lean toward not hiding it too much to get the most out of it
+
+## Usage
+
+
 ### Setup
 
 First you'll need to install the library.
 
-This can be done ether through the nu-get package manager or with the with the following commands:
+This can be done either through the nu-get package manager built into your IDE or with the with the following commands:
 
     nu-get install.....
 
-
+Once set up, the eager loading functionality is easily plugged into your codebase.
 ___
   
-### Usage
-
-Once set up, the eager loading functionality is easily plugged into your codebase.
-
-
-
-
 ### Repository Integration:
 
 

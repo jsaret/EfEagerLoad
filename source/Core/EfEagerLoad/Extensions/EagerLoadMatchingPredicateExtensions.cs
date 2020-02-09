@@ -18,10 +18,10 @@ namespace EfEagerLoad.Extensions
         }
 
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext,
-            Func<EagerLoadContext, string, bool> funcIncludeStrategy, params string[] navigationPropertiesToIgnore)
+            Predicate<string> includePathPredicate, params string[] navigationPropertiesToIgnore)
             where TEntity : class
         {
-            return query.EagerLoadMatching(dbContext, funcIncludeStrategy, true, navigationPropertiesToIgnore);
+            return query.EagerLoadMatching(dbContext, includePathPredicate, true, navigationPropertiesToIgnore);
         }
 
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext,
@@ -33,27 +33,28 @@ namespace EfEagerLoad.Extensions
         }
 
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext,
-            Func<EagerLoadContext, string, bool> funcIncludeStrategy, bool eagerLoad, params string[] navigationPropertiesToIgnore)
+            Predicate<string> includePathPredicate, bool eagerLoad, params string[] navigationPropertiesToIgnore)
             where TEntity : class
         {
-            return query.EagerLoadMatching(dbContext, funcIncludeStrategy, (eagerLoad ? IncludeExecution.Cached : IncludeExecution.Skip),
+            return query.EagerLoadMatching(dbContext, includePathPredicate, (eagerLoad ? IncludeExecution.Cached : IncludeExecution.Skip),
                 navigationPropertiesToIgnore);
+        }
+
+        public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext,
+            Predicate<string> includePathPredicate, IncludeExecution includeExecution, params string[] navigationPropertiesToIgnore)
+            where TEntity : class
+        {
+            var includeStrategy = new PredicateIncludeStrategy(includePathPredicate);
+            return query.EagerLoadMatching(dbContext, includeStrategy, includeExecution, navigationPropertiesToIgnore);
         }
 
         public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext,
             Predicate<EagerLoadContext> includeStrategyPredicate, IncludeExecution includeExecution, params string[] navigationPropertiesToIgnore)
             where TEntity : class
         {
-            return query.EagerLoadMatching(dbContext, (context, path) => includeStrategyPredicate(context),
-                                            includeExecution, navigationPropertiesToIgnore);
-        }
-
-        public static IQueryable<TEntity> EagerLoadMatching<TEntity>(this IQueryable<TEntity> query, DbContext dbContext,
-            Func<EagerLoadContext, string, bool> funcIncludeStrategy, IncludeExecution includeExecution, params string[] navigationPropertiesToIgnore)
-            where TEntity : class
-        {
-            var includeStrategy = new PredicateIncludeStrategy(funcIncludeStrategy);
-            return query.EagerLoadMatching(dbContext, includeStrategy, includeExecution, navigationPropertiesToIgnore);
+            var includeStrategy = new PredicateIncludeStrategy(includeStrategyPredicate);
+            return query.EagerLoadMatching(dbContext, (context) => includeStrategyPredicate(context),
+                includeExecution, navigationPropertiesToIgnore);
         }
     }
 }

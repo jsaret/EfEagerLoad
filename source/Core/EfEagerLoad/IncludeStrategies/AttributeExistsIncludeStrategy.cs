@@ -23,13 +23,8 @@ namespace EfEagerLoad.IncludeStrategies
             _attributeType = attributeType;
         }
 
-        public override bool ShouldIncludeNavigation(EagerLoadContext context, string navigationPath)
+        public override bool ShouldIncludeNavigation(EagerLoadContext context)
         {
-            if (context.CurrentNavigation?.PropertyInfo == null)
-            {
-                return false;
-            }
-
             return AttributeCache.GetOrAdd(context.CurrentNavigation.PropertyInfo, prop =>
                 Attribute.IsDefined(context.CurrentNavigation.PropertyInfo, _attributeType));
         }

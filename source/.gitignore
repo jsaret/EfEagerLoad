@@ -37,6 +37,7 @@ TestResult.xml
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
+*.DotSettings
 
 .JustCode
 *.GhostDoc.xml

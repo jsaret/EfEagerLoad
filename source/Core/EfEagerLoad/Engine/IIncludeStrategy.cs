@@ -5,9 +5,9 @@ namespace EfEagerLoad.Engine
 {
     public interface IIncludeStrategy
     {
-        bool ShouldIncludeNavigation(EagerLoadContext context, string navigationPath);
+        bool ShouldIncludeNavigation(EagerLoadContext context);
 
-        void FilterNavigationPathsBeforeInclude(EagerLoadContext context);
+        void FilterIncludePathsBeforeInclude(EagerLoadContext context);
 
         void ExecuteBeforeInclude(EagerLoadContext context);
     }

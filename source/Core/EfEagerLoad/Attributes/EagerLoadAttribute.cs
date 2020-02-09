@@ -3,23 +3,40 @@
 namespace EfEagerLoad.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class EagerLoadAttribute : System.Attribute
+    public class EagerLoadAttribute : Attribute
     {
-        public EagerLoadAttribute(bool onlyIfOnRoot = false, bool notIfOnRoot = false, int maxVisitsForType = 2, int maxVisitsForRootType = 2, 
-                                    int maxDepth = 5)
+        public EagerLoadAttribute(bool always = false, bool onlyOnRoot = false, bool notOnRoot = false, 
+                                    bool notIfParentType = false, bool notIfRootType = false,
+                                    int maxDepth = 6, int maxDepthPosition = 6,
+                                    int maxRootTypeCount = 2, int maxTypeCount = 3)
         {
-            OnlyIfOnRoot = onlyIfOnRoot;
-            NotIfOnRoot = notIfOnRoot;
-            MaxVisitsForType = maxVisitsForType;
-            MaxVisitsForRootType = maxVisitsForRootType;
+            Always = always;
+            OnlyOnRoot = onlyOnRoot;
+            NotOnRoot = notOnRoot;
+            NotIfParentType = notIfParentType;
+            NotIfRootType = notIfRootType;
+            MaxDepth = maxDepth;
+            MaxDepthPosition = maxDepthPosition;
+            MaxRootTypeCount = maxRootTypeCount;
+            MaxTypeCount = maxTypeCount;
         }
 
-        public bool OnlyIfOnRoot { get; }
+        public bool Always { get; }
 
-        public bool NotIfOnRoot { get; }
+        public bool OnlyOnRoot { get; }
 
-        public int MaxVisitsForType { get; }
+        public bool NotOnRoot { get; }
 
-        public int MaxVisitsForRootType { get; }
+        public bool NotIfParentType { get; }
+
+        public bool NotIfRootType { get; }
+
+        public int MaxDepth { get; }
+
+        public int MaxDepthPosition { get; }
+
+        public int MaxRootTypeCount { get; }
+
+        public int MaxTypeCount { get; }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using EfEagerLoad.Common;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfEagerLoad.Engine
@@ -35,8 +34,8 @@ namespace EfEagerLoad.Engine
 
             foreach (var navigation in navigationToInclude)
             {
-                context.IncludePathsToInclude.Add(context.CurrentIncludePath);
                 context.SetCurrentNavigation(navigation);
+                context.IncludePathsToInclude.Add(context.CurrentIncludePath);
                 BuildIncludesForType(context, navigation.GetNavigationType(), parentIncludePath);
                 context.RemoveCurrentNavigation();
             }

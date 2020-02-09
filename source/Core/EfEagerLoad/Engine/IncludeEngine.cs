@@ -28,55 +28,53 @@ namespace EfEagerLoad.Engine
             Guard.IsNotNull(nameof(query), query);
             Guard.IsNotNull(nameof(context), context);
 
+            if (context.IncludeExecution == IncludeExecution.Skip) { return query; }
+
+            // Bit of a cheat as will stop the code from doing any Includes without Entity Framework being attached to a Query or going through missions ...
+            // Was impeding various evaluations & comparisons so out for now.
+            // Maybe worth while doing a build directive to include for Published builds?
+            //if (!(query.Provider is EntityQueryProvider)) { return query; }
+
             if (context.RootType == null)
             {
                 context.RootType = typeof(TEntity);
             }
+            
+            var includePaths = GetPreFilteredIncludePaths(context);
+            
+            return GetQueryableWithIncludePaths(query, context, includePaths);
+        }
 
-            IList<string> includeStatements;
-
+        private IEnumerable<string> GetPreFilteredIncludePaths(EagerLoadContext context)
+        {
             switch (context.IncludeExecution)
             {
                 case IncludeExecution.Cached:
                 {
-                    includeStatements = CachedIncludePaths.GetOrAdd(context.RootType, (type) =>
+                    return CachedIncludePaths.GetOrAdd(context.RootType, (type) =>
                         _includeFinder.BuildIncludePathsForRootType(context));
-                    break;
                 }
                 case IncludeExecution.UseOnlyCache:
                 {
-                    if (CachedIncludePaths.ContainsKey(context.RootType))
-                    {
-                        includeStatements = CachedIncludePaths.GetValueOrDefault(context.RootType);
-                        break;
-                    }
-
-                    includeStatements = _includeFinder.BuildIncludePathsForRootType(context);
-                    break;
+                    return CachedIncludePaths.ContainsKey(context.RootType) ? CachedIncludePaths.GetValueOrDefault(context.RootType) : 
+                            _includeFinder.BuildIncludePathsForRootType(context);
                 }
                 case IncludeExecution.NoCache:
                 {
-                    includeStatements = _includeFinder.BuildIncludePathsForRootType(context);
-                    break;
+                    return _includeFinder.BuildIncludePathsForRootType(context);
                 }
                 case IncludeExecution.Recache:
                 {
-                    includeStatements = _includeFinder.BuildIncludePathsForRootType(context);
+                    var includeStatements = _includeFinder.BuildIncludePathsForRootType(context);
                     CachedIncludePaths.TryAdd(context.RootType, includeStatements);
-                    break;
-                }
-                case IncludeExecution.Skip:
-                {
-                    return query;
+                    return includeStatements;
                 }
                 default: throw new ArgumentOutOfRangeException();
             }
-
-            return GetQueryableWithIncludePaths(query, context, includeStatements);
         }
 
-        private static IQueryable<TEntity> GetQueryableWithIncludePaths<TEntity>(IQueryable<TEntity> query, EagerLoadContext context,
-                                                                            IList<string> includeStatements) where TEntity : class
+        private static IQueryable<TEntity> GetQueryableWithIncludePaths<TEntity>(IQueryable<TEntity> query, 
+            EagerLoadContext context, IEnumerable<string> includeStatements) where TEntity : class
         {
             if (context.IncludePathsToInclude.Count == 0) { return query; }
 

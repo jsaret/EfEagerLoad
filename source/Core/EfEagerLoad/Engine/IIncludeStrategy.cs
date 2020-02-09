@@ -5,7 +5,7 @@ namespace EfEagerLoad.Engine
 {
     public interface IIncludeStrategy
     {
-        bool ShouldIncludeNavigation(EagerLoadContext context);
+        bool ShouldIncludeCurrentNavigation(EagerLoadContext context);
 
         void FilterIncludePathsBeforeInclude(EagerLoadContext context);
 

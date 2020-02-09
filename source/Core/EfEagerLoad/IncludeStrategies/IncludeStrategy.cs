@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json;
 using EfEagerLoad.Common;
 using EfEagerLoad.Engine;
 using Microsoft.Extensions.Logging;
@@ -8,9 +9,9 @@ namespace EfEagerLoad.IncludeStrategies
 {
     public abstract class IncludeStrategy : IIncludeStrategy
     {
-        private const string IncludeLogMessage = "EfEagerLoad is about to include the following paths: ";
+        private const string IncludeLogMessage = "EfEagerLoad is about to include the following paths for type ";
 
-        public abstract bool ShouldIncludeNavigation(EagerLoadContext context);
+        public abstract bool ShouldIncludeCurrentNavigation(EagerLoadContext context);
 
         public virtual void FilterIncludePathsBeforeInclude(EagerLoadContext context)
         {
@@ -25,8 +26,10 @@ namespace EfEagerLoad.IncludeStrategies
 
         public virtual void ExecuteBeforeInclude(EagerLoadContext context)
         {
-            var logger = context.ServiceProvider?.GetService(typeof(ILogger<IncludeEngine>)) as ILogger<IncludeEngine>;
-            logger?.LogDebug(IncludeLogMessage, context.IncludePathsToInclude);
+            //if (!(context.ServiceProvider?.GetService(typeof(ILogger)) is ILogger logger)) { return; }
+
+            //var includePaths = JsonSerializer.Serialize(context.IncludePathsToInclude);
+            //logger.LogInformation($"{IncludeLogMessage}{context.RootType.Name}: {includePaths}");
         }
     }
 }

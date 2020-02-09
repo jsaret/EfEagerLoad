@@ -19,7 +19,7 @@ namespace EfEagerLoad.IncludeStrategies
             _strategy = (context) => strategy(context.CurrentIncludePath);
         }
 
-        public override bool ShouldIncludeNavigation(EagerLoadContext context)
+        public override bool ShouldIncludeCurrentNavigation(EagerLoadContext context)
         {
             return _strategy(context);
         }

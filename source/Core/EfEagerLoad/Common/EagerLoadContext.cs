@@ -13,7 +13,7 @@ namespace EfEagerLoad.Common
         private static readonly AsyncLocal<IServiceProvider> ThreadLocalServiceProvider = new AsyncLocal<IServiceProvider>();
 
         private readonly Stack<INavigation> _navigationPath = new Stack<INavigation>();
-        private char[] _currentIncludePath = string.Empty.ToCharArray();
+        private char[] _currentIncludePath = Array.Empty<char>();
 
         public EagerLoadContext(DbContext dbContext, IIncludeStrategy includeStrategy, IList<string> includePathsToIgnore = null,
                                 IncludeExecution includeExecution = IncludeExecution.Cached, Type rooType = null)
@@ -34,7 +34,7 @@ namespace EfEagerLoad.Common
 
         public string CurrentIncludePath => new string(_currentIncludePath);
 
-        public ReadOnlySpan<char> CurrentIncludePathSpan => _currentIncludePath;
+        public ReadOnlySpan<char> CurrentIncludePathSpan => _currentIncludePath.AsSpan();
 
         public string ParentIncludePath => CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
 
@@ -46,14 +46,14 @@ namespace EfEagerLoad.Common
         public DbContext DbContext { get; }
 
         public IList<string> IncludePathsToIgnore { get; }
-
-        public IList<Type> TypesVisited => new List<Type>();
-
+        
         public IIncludeStrategy IncludeStrategy { get; set; }
 
         public IncludeExecution IncludeExecution { get; }
 
         public IList<string> IncludePathsToInclude { get; internal set; } = new List<string>();
+
+        public IDictionary<string, object> Bag = new Dictionary<string, object>(5);
 
         public IServiceProvider ServiceProvider
         {

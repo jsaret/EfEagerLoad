@@ -37,11 +37,11 @@ namespace EfEagerLoad.Tests.IncludeStrategies
 
             navigationMock.Setup(nav => nav.PropertyInfo)
                 .Returns(GetType().GetProperty(nameof(NoAttributes)));
-            Assert.False(strategy.ShouldIncludeNavigation(context));
+            Assert.False(strategy.ShouldIncludeCurrentNavigation(context));
 
             navigationMock.Setup(nav => nav.PropertyInfo)
                 .Returns(GetType().GetProperty(nameof(NoEagerLoadAttributes)));
-            Assert.False(strategy.ShouldIncludeNavigation(context));
+            Assert.False(strategy.ShouldIncludeCurrentNavigation(context));
         }
 
         [Fact]
@@ -56,11 +56,11 @@ namespace EfEagerLoad.Tests.IncludeStrategies
 
             navigationMock.Setup(nav => nav.PropertyInfo)
                 .Returns(GetType().GetProperty(nameof(HasEagerLoadAttribute)));
-            Assert.True(strategy.ShouldIncludeNavigation(context));
+            Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
 
             navigationMock.Setup(nav => nav.PropertyInfo)
                 .Returns(GetType().GetProperty(nameof(HasManyIncludingEagerLoadAttribute)));
-            Assert.True(strategy.ShouldIncludeNavigation(context));
+            Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
         }
 
     }

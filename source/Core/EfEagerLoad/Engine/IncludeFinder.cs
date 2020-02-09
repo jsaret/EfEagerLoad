@@ -25,21 +25,18 @@ namespace EfEagerLoad.Engine
 
         private void BuildIncludesForType(EagerLoadContext context, Type type)
         {
-            context.TypesVisited.Add(type);
             var navigationsToConsider = _navigationFinder.GetNavigationsForType(context, type);
 
             foreach (var navigation in navigationsToConsider)
             {
                 context.SetCurrentNavigation(navigation);
-                if (context.IncludeStrategy.ShouldIncludeNavigation(context))
+
+                if (context.IncludeStrategy.ShouldIncludeCurrentNavigation(context))
                 {
-                    context.RemoveCurrentNavigation();
-                    continue;
+                    context.IncludePathsToInclude.Add(context.CurrentIncludePath);
+                    BuildIncludesForType(context, navigation.GetNavigationType());
                 }
 
-                context.IncludePathsToInclude.Add(context.CurrentIncludePath);
-                BuildIncludesForType(context, navigation.GetNavigationType());
-                
                 context.RemoveCurrentNavigation();
             }
         }

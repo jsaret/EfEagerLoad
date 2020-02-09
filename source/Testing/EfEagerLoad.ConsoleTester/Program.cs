@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using EfEagerLoad.Common;
 using EfEagerLoad.ConsoleTester.Configuration;
 using EfEagerLoad.Extensions;
 using EfEagerLoad.Testing.Data;
@@ -19,15 +20,16 @@ namespace EfEagerLoad.ConsoleTester
 
         public static async Task Main(string[] args)
         {
-            //var value = Perf();
+            var value = Perf();
 
-            //if (value == null)
-            //{
-            //    Console.WriteLine();
-            //}
+            if (value == null)
+            {
+                Console.WriteLine();
+            }
 
-            Func<Task> runFunc = Run;
-            await runFunc.RunInConsole();
+
+            //Func<Task> runFunc = Run;
+            //await runFunc.RunInConsole();
         }
 
         public static object Perf()
@@ -50,6 +52,7 @@ namespace EfEagerLoad.ConsoleTester
             var serviceProvider = await SetupServices();
             var testRunner = serviceProvider.GetRequiredService<TestRunner>();
 
+            EagerLoadContext.InitializeServiceProvider(serviceProvider);
             //await testRunner.RunTest1();
             await testRunner.RunTest2();
             //await testRunner.RunTest3();

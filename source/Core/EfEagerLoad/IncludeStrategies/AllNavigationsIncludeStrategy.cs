@@ -6,7 +6,7 @@ namespace EfEagerLoad.IncludeStrategies
 {
     public class AllNavigationsIncludeStrategy : IncludeStrategy
     {
-        public override bool ShouldIncludeNavigation(EagerLoadContext context)
+        public override bool ShouldIncludeCurrentNavigation(EagerLoadContext context)
         {
             return !context.IncludePathsToIgnore.Any(context.CurrentIncludePath.StartsWith);
         }

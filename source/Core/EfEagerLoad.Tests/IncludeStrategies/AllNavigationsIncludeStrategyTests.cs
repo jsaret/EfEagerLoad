@@ -20,7 +20,7 @@ namespace EfEagerLoad.Tests.IncludeStrategies
             navigationMock.Setup(nav => nav.Name).Returns(nameof(Book));
             context.SetCurrentNavigation(navigationMock.Object);
 
-            Assert.True(strategy.ShouldIncludeNavigation(context));
+            Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace EfEagerLoad.Tests.IncludeStrategies
             navigationMock.Setup(nav => nav.Name).Returns(nameof(INavigation));
             context.SetCurrentNavigation(navigationMock.Object);
 
-            Assert.False(strategy.ShouldIncludeNavigation(context));
+            Assert.False(strategy.ShouldIncludeCurrentNavigation(context));
         }
     }
 }

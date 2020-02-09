@@ -1,6 +1,6 @@
-Master: ![Master](https://github.com/jsaret/EfEagerLoad/workflows/build_test/badge.svg?branch=master)
+Master: ![Master](https://github.com/jsaret/EfEagerLoad/workflows/Build/badge.svg?branch=master)
 
-Development: ![Development](https://github.com/jsaret/EfEagerLoad/workflows/build_test/badge.svg?branch=development)
+Development: ![Development](https://github.com/jsaret/EfEagerLoad/workflows/Build/badge.svg?branch=development)
 
 # EfEagerLoad
 

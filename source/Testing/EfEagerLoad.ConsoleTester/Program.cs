@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EfEagerLoad.Common;
 using EfEagerLoad.ConsoleTester.Configuration;
+using EfEagerLoad.Engine;
 using EfEagerLoad.Extensions;
 using EfEagerLoad.Testing.Data;
 using EfEagerLoad.Testing.Extensions;
@@ -20,16 +21,16 @@ namespace EfEagerLoad.ConsoleTester
 
         public static async Task Main(string[] args)
         {
-            var value = Perf();
+            //var value = Perf();
 
-            if (value == null)
-            {
-                Console.WriteLine();
-            }
+            //if (value == null)
+            //{
+            //    Console.WriteLine();
+            //}
 
 
-            //Func<Task> runFunc = Run;
-            //await runFunc.RunInConsole();
+            Func<Task> runFunc = Run;
+            await runFunc.RunInConsole();
         }
 
         public static object Perf()
@@ -40,9 +41,9 @@ namespace EfEagerLoad.ConsoleTester
 
             var item = new object();
             var bookQuery = new Book[0].AsQueryable();
-            Enumerable.Range(0, 500000).ForEach(_ =>
+            Enumerable.Range(0, 1000000).ForEach(_ =>
             {
-                item = bookQuery.EagerLoad(_testDbContext, true, "Test").ToArray();
+                item = bookQuery.EagerLoad(_testDbContext, IncludeExecution.Cached).ToArray();
             });
             return item;
         }
@@ -53,7 +54,7 @@ namespace EfEagerLoad.ConsoleTester
             var testRunner = serviceProvider.GetRequiredService<TestRunner>();
 
             EagerLoadContext.InitializeServiceProvider(serviceProvider);
-            //await testRunner.RunTest1();
+            await testRunner.RunTest1();
             await testRunner.RunTest2();
             //await testRunner.RunTest3();
             //await testRunner.RunTest4();

@@ -26,10 +26,10 @@ namespace EfEagerLoad.IncludeStrategies
 
         public virtual void ExecuteBeforeInclude(EagerLoadContext context)
         {
-            //if (!(context.ServiceProvider?.GetService(typeof(ILogger)) is ILogger logger)) { return; }
+            if (!(context.ServiceProvider?.GetService(typeof(ILogger)) is ILogger logger)) { return; }
 
-            //var includePaths = JsonSerializer.Serialize(context.IncludePathsToInclude);
-            //logger.LogInformation($"{IncludeLogMessage}{context.RootType.Name}: {includePaths}");
+            var includePaths = JsonSerializer.Serialize(context.IncludePathsToInclude);
+            logger.LogInformation($"{IncludeLogMessage}{context.RootType.Name}: {includePaths}");
         }
     }
 }

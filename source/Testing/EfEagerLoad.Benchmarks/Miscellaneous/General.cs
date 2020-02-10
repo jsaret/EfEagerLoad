@@ -35,7 +35,15 @@ namespace EfEagerLoad.Benchmarks.Miscellaneous
             var bookQuery = new Book[0].AsQueryable();
             return bookQuery.Include(book => book.Author).ThenInclude(author => author.Books)
                 .Include(book => book.Category)
-                .Include(book => book.Publisher).ToArray();
+                .Include(book => book.Publisher).ThenInclude(p => p.Books)
+                .ToArray();
+
+            //return bookQuery.Include(book => book.Author).ThenInclude(author => author.Books).ThenInclude(b => b.Author)
+            //    .ThenInclude(a => a.Books)
+            //    .Include(book => book.Category)
+            //    .Include(book => book.Publisher)
+            //    .ThenInclude(p => p.Books).ThenInclude(b => b.Author).ThenInclude(a => a.Books)
+            //    .ToArray();
         }
 
         [Benchmark]

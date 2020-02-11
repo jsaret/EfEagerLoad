@@ -13,8 +13,6 @@ namespace EfEagerLoad.Common
         private static readonly AsyncLocal<IServiceProvider> ThreadLocalServiceProvider = new AsyncLocal<IServiceProvider>();
 
         private readonly Stack<INavigation> _navigationPath = new Stack<INavigation>();
-        private string _parentIncludePath = string.Empty;
-        private string _currentIncludePath = string.Empty;
 
         public EagerLoadContext(DbContext dbContext, IIncludeStrategy includeStrategy, IList<string> includePathsToIgnore = null,
                                 IncludeExecution includeExecution = IncludeExecution.Cached, Type rooType = null)
@@ -31,15 +29,17 @@ namespace EfEagerLoad.Common
 
         public Type RootType { get; internal set; }
 
+        public Type CurrentType => CurrentNavigation?.GetNavigationType();
+
         public INavigation CurrentNavigation => (_navigationPath.Any()) ? _navigationPath.Peek() : null;
 
-        public string CurrentIncludePath => _currentIncludePath;
+        public string CurrentIncludePath { get; private set; } = string.Empty;
 
-        public ReadOnlySpan<char> CurrentIncludePathSpan => _currentIncludePath.AsSpan();
+        public ReadOnlySpan<char> CurrentIncludePathSpan => CurrentIncludePath.AsSpan();
 
-        public string ParentIncludePath => _parentIncludePath;
+        public string ParentIncludePath { get; private set; } = string.Empty;
 
-        public ReadOnlySpan<char> ParentIncludePathSpan => _parentIncludePath.AsSpan();
+        public ReadOnlySpan<char> ParentIncludePathSpan => ParentIncludePath.AsSpan();
 
         public IEnumerable<INavigation> NavigationPath => _navigationPath;
 
@@ -58,7 +58,7 @@ namespace EfEagerLoad.Common
         public IServiceProvider ServiceProvider
         {
             get => ThreadLocalServiceProvider.Value;
-            set => ThreadLocalServiceProvider.Value = value;
+            set => InitializeServiceProvider(value);
         }
 
         internal void SetCurrentNavigation(INavigation navigation)
@@ -66,9 +66,9 @@ namespace EfEagerLoad.Common
             if(navigation == null) { return; }
 
             _navigationPath.Push(navigation);
-            _currentIncludePath = (NavigationPath.Skip(1).Any()) ? $"{CurrentIncludePath}.{CurrentNavigation.Name}" :
+            CurrentIncludePath = (NavigationPath.Skip(1).Any()) ? $"{CurrentIncludePath}.{CurrentNavigation.Name}" :
                                                                     CurrentNavigation.Name;
-            _parentIncludePath = _currentIncludePath.AsSpan().GetParentIncludePathSpan().ToString();
+            ParentIncludePath = CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
         }
         
         internal void RemoveCurrentNavigation()
@@ -76,10 +76,10 @@ namespace EfEagerLoad.Common
             if (_navigationPath.Count == 0) { return; }
 
             _navigationPath.Pop();
-            _currentIncludePath = (!NavigationPath.Skip(1).Any()) ? 
+            CurrentIncludePath = (!NavigationPath.Skip(1).Any()) ? 
                                     CurrentNavigation?.Name ?? string.Empty :
-                                    _parentIncludePath;
-            _parentIncludePath = _currentIncludePath.AsSpan().GetParentIncludePathSpan().ToString();
+                                    ParentIncludePath;
+            ParentIncludePath = CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
         }
 
         public static void InitializeServiceProvider(IServiceProvider serviceProvider)

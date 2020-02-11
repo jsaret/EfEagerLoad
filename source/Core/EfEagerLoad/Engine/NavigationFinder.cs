@@ -14,7 +14,7 @@ namespace EfEagerLoad.Engine
 
         public IEnumerable<INavigation> GetNavigationsForType(EagerLoadContext context, Type type)
         {
-            return CachedTypeNavigations.GetOrAdd(type, typeToFind => context.DbContext.Model.FindEntityType(type).GetNavigations().ToArray());
+            return CachedTypeNavigations.GetOrAdd(type, typeToFind => context.DbContext.Model.FindEntityType(typeToFind).GetNavigations().ToArray());
         }
     }
 }

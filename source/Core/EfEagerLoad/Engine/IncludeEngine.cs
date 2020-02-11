@@ -33,6 +33,7 @@ namespace EfEagerLoad.Engine
             // Bit of a cheat as will stop the code from doing any Includes without Entity Framework being attached to a Query or going through missions ...
             // Was impeding various evaluations & comparisons so out for now.
             // Maybe worth while doing a build directive to include for Published builds?
+
             //if (!(query.Provider is EntityQueryProvider)) { return query; }
 
             if (context.RootType == null)

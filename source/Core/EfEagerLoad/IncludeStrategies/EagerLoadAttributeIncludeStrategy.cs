@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using EfEagerLoad.Attributes;
@@ -26,7 +25,7 @@ namespace EfEagerLoad.IncludeStrategies
             // No EagerLoad Attribute
             if (attribute == null) { return false; }
 
-            if (attribute.MaxDepth -5 < context.NavigationPath.Count()) { return false; }
+            if (attribute.MaxDepth - 5 < context.NavigationPath.Count()) { return false; }
 
             //On Root Type vs Others
             if (context.NavigationPath.Count() == 1 && ShouldNotEagerLoadOffRoot(context, attribute)) { return false; }

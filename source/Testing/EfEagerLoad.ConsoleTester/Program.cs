@@ -5,6 +5,7 @@ using EfEagerLoad.Common;
 using EfEagerLoad.ConsoleTester.Configuration;
 using EfEagerLoad.Engine;
 using EfEagerLoad.Extensions;
+using EfEagerLoad.IncludeStrategies;
 using EfEagerLoad.Testing.Data;
 using EfEagerLoad.Testing.Extensions;
 using EfEagerLoad.Testing.Model;
@@ -36,7 +37,7 @@ namespace EfEagerLoad.ConsoleTester
         public static object Perf()
         {
             //var bookQuery = new Book[0].AsQueryable();
-            //return bookQuery.AsQueryable().EagerLoad(_testDbContext, IncludeStrategy.IncludeExecution.NoCache).ToArray();
+            //return bookQuery.AsQueryable().EagerLoad(_testDbContext, IncludeExecution.NoCache).ToArray();
 
 
             var item = new object();

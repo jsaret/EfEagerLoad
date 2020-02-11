@@ -9,7 +9,7 @@ namespace EfEagerLoad.IncludeStrategies
 {
     public abstract class IncludeStrategy : IIncludeStrategy
     {
-        private const string IncludeLogMessage = "EfEagerLoad is about to include the following paths for type ";
+        private const string IncludeLogMessage = "EfEagerLoad is including the following paths for ";
 
         public abstract bool ShouldIncludeCurrentNavigation(EagerLoadContext context);
 
@@ -25,11 +25,16 @@ namespace EfEagerLoad.IncludeStrategies
         }
 
         public virtual void ExecuteBeforeInclude(EagerLoadContext context)
-        {
-            if (!(context.ServiceProvider?.GetService(typeof(ILogger)) is ILogger logger)) { return; }
+        { 
+            var loggerInject = context.ServiceProvider?.GetService(typeof(ILogger<IncludeStrategy>)) ?? 
+                               context.ServiceProvider?.GetService(typeof(ILogger));
+
+            if (!(loggerInject is ILogger logger)) { return; }
 
             var includePaths = JsonSerializer.Serialize(context.IncludePathsToInclude);
             logger.LogInformation($"{IncludeLogMessage}{context.RootType.Name}: {includePaths}");
+
+
         }
     }
 }

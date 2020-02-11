@@ -19,29 +19,31 @@ namespace EfEagerLoad.Engine
 
         public IList<string> BuildIncludePathsForRootType(EagerLoadContext context)
         {
-            BuildIncludesForType(context, context.RootType);
+            BuildIncludesForEagerLoadContext(context);
             return context.IncludePathsToInclude;
         }
 
-        private void BuildIncludesForType(EagerLoadContext context, Type type)
+        private void BuildIncludesForEagerLoadContext(EagerLoadContext context)
         {
-            var navigationsToConsider = _navigationFinder.GetNavigationsForType(context, type);
+            BuildIncludesForEagerLoadContext();
 
-            foreach (var navigation in navigationsToConsider)
+            void BuildIncludesForEagerLoadContext()
             {
-                context.SetCurrentNavigation(navigation);
+                var navigationsToConsider = _navigationFinder.GetNavigationsForType(context, context.CurrentType ?? context.RootType);
 
-                if (context.IncludeStrategy.ShouldIncludeCurrentNavigation(context))
+                foreach (var navigation in navigationsToConsider)
                 {
-                    context.IncludePathsToInclude.Add(context.CurrentIncludePath);
-                    BuildIncludesForType(context, navigation.GetNavigationType());
-                }
+                    context.SetCurrentNavigation(navigation);
 
-                context.RemoveCurrentNavigation();
+                    if (context.IncludeStrategy.ShouldIncludeCurrentNavigation(context))
+                    {
+                        context.IncludePathsToInclude.Add(context.CurrentIncludePath);
+                        BuildIncludesForEagerLoadContext();
+                    }
+
+                    context.RemoveCurrentNavigation();
+                }
             }
         }
-
-
-
     }
 }

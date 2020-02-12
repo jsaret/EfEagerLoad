@@ -8,9 +8,11 @@ namespace EfEagerLoad.Common
 
         public static ReadOnlySpan<char> GetParentIncludePathSpan(this ReadOnlySpan<char> includePath)
         {
-            if (!includePath.Contains(SeparatorCharacter)) { return string.Empty.ToCharArray(); }
+            if (includePath.Length == 0) { return string.Empty.ToCharArray(); }
 
-            return includePath.Slice(0, includePath.LastIndexOf("."));
+            return includePath.Contains(SeparatorCharacter) ? 
+                includePath.Slice(0, includePath.LastIndexOf(SeparatorCharacter))
+                : string.Empty;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
     [RankColumn]
     [Orderer(SummaryOrderPolicy.FastestToSlowest)]
     [MemoryDiagnoser]
-    public class GeneralBenchmarks
+    public class General
     {
         private TestDbContext _testDbContext;
 

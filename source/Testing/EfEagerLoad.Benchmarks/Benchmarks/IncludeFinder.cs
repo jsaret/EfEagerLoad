@@ -14,12 +14,12 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
     [RankColumn]
     [Orderer(SummaryOrderPolicy.FastestToSlowest)]
     [MemoryDiagnoser]
-    public class IncludeFinderBenchmarks
+    public class IncludeFinder
     {
         private TestDbContext _testDbContext;
         private EagerLoadContext _context;
         private EagerLoadAttributeIncludeStrategy _strategy;
-        private IncludeFinder _includeFinder;
+        private Engine.IncludeFinder _includeFinder;
 
         [Benchmark(Baseline = true)]
         public IList<string> Recurse_Baseline()
@@ -54,7 +54,7 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
 
             _context = new EagerLoadContext(_testDbContext, _strategy, new string[0], IncludeExecution.NoCache, typeof(Book));
 
-            _includeFinder = new IncludeFinder();
+            _includeFinder = new Engine.IncludeFinder();
         }
     }
 }

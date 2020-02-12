@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
+using EfEagerLoad.Benchmarks.Data;
+using EfEagerLoad.Benchmarks.Model;
 using EfEagerLoad.Engine;
 using EfEagerLoad.Extensions;
-using EfEagerLoad.IncludeStrategies;
-using EfEagerLoad.Testing.Data;
-using EfEagerLoad.Testing.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace EfEagerLoad.Benchmarks.Miscellaneous
+namespace EfEagerLoad.Benchmarks.Benchmarks
 {
     [RankColumn]
     [Orderer(SummaryOrderPolicy.FastestToSlowest)]
     [MemoryDiagnoser]
-    public class General
+    public class GeneralBenchmarks
     {
         private TestDbContext _testDbContext;
 
@@ -44,6 +43,13 @@ namespace EfEagerLoad.Benchmarks.Miscellaneous
             //    .Include(book => book.Publisher)
             //    .ThenInclude(p => p.Books).ThenInclude(b => b.Author).ThenInclude(a => a.Books)
             //    .ToArray();
+        }
+
+        [Benchmark]
+        public IList<Book> EfEagerLoad_IgnoringIncludePaths()
+        {
+            var bookQuery = new Book[0].AsQueryable();
+            return bookQuery.EagerLoad(_testDbContext, $"{nameof(Book.Author)}.{ nameof(Author.Books)}").ToArray();
         }
 
         [Benchmark]

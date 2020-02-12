@@ -11,6 +11,7 @@ namespace EfEagerLoad.Common
     public class EagerLoadContext
     {
         private static readonly AsyncLocal<IServiceProvider> ThreadLocalServiceProvider = new AsyncLocal<IServiceProvider>();
+        private static readonly char SeparatorCharacter = char.Parse(".");
 
         private readonly Stack<INavigation> _navigationPath = new Stack<INavigation>();
 
@@ -39,8 +40,6 @@ namespace EfEagerLoad.Common
 
         public string ParentIncludePath { get; private set; } = string.Empty;
 
-        public ReadOnlySpan<char> ParentIncludePathSpan => ParentIncludePath.AsSpan();
-
         public IEnumerable<INavigation> NavigationPath => _navigationPath;
 
         public DbContext DbContext { get; }
@@ -66,19 +65,37 @@ namespace EfEagerLoad.Common
             if(navigation == null) { return; }
 
             _navigationPath.Push(navigation);
-            CurrentIncludePath = (NavigationPath.Skip(1).Any()) ? $"{CurrentIncludePath}.{CurrentNavigation.Name}" :
-                                                                    CurrentNavigation.Name;
+            CurrentIncludePath = (NavigationPath.Skip(1).Any()) ?
+                                $"{CurrentIncludePath}.{CurrentNavigation.Name}" :
+                                CurrentNavigation.Name;
             ParentIncludePath = CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
         }
-        
+
+        internal void SetCurrentNavigation2(INavigation navigation)
+        {
+            if (navigation == null) { return; }
+
+            _navigationPath.Push(navigation);
+            CurrentIncludePath = (NavigationPath.Skip(1).Any()) ?
+                string.Create(CurrentIncludePath.Length + 1 + CurrentNavigation.Name.Length, this,
+                    (chars, state) =>
+                    {
+                        state.CurrentIncludePath.AsSpan().CopyTo(chars);
+                        chars[state.CurrentIncludePath.Length] = SeparatorCharacter;
+                        state.CurrentNavigation.Name.AsSpan().CopyTo(chars.Slice(state.CurrentIncludePath.Length + 1));
+                    }) :
+                CurrentNavigation.Name;
+            ParentIncludePath = CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
+        }
+
         internal void RemoveCurrentNavigation()
         {
             if (_navigationPath.Count == 0) { return; }
 
             _navigationPath.Pop();
-            CurrentIncludePath = (!NavigationPath.Skip(1).Any()) ? 
-                                    CurrentNavigation?.Name ?? string.Empty :
-                                    ParentIncludePath;
+            CurrentIncludePath = (NavigationPath.Skip(1).Any()) ?
+                                    ParentIncludePath :
+                                    CurrentNavigation?.Name ?? string.Empty;
             ParentIncludePath = CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
         }
 

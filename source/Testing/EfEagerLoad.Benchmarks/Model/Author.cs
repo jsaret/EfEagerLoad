@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using EfEagerLoad.Attributes;
 
-namespace EfEagerLoad.Testing.Model
+namespace EfEagerLoad.Benchmarks.Model
 {
-    public class Country
+    public class Author
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,6 +15,6 @@ namespace EfEagerLoad.Testing.Model
         public string Name { get; set; }
 
         [EagerLoad]
-        public virtual IList<Publisher> Publishers { get; set; } = new List<Publisher>();
+        public virtual IList<Book> Books { get; set; } = new List<Book>();
     }
 }

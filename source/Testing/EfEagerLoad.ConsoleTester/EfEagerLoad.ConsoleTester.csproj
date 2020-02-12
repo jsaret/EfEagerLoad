@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\EfEagerLoad\EfEagerLoad.csproj" />
-    <ProjectReference Include="..\EfEagerLoad.Testing\EfEagerLoad.Testing.csproj" />
   </ItemGroup>
 
 </Project>

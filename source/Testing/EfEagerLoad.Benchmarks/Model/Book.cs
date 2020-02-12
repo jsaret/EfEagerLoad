@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using EfEagerLoad.Attributes;
 
-namespace EfEagerLoad.Testing.Model
+namespace EfEagerLoad.Benchmarks.Model
 {
     public class Book
     {

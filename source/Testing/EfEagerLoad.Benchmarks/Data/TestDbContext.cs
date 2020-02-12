@@ -1,8 +1,8 @@
 ﻿using System;
-using EfEagerLoad.Testing.Model;
+using EfEagerLoad.Benchmarks.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace EfEagerLoad.Testing.Data
+namespace EfEagerLoad.Benchmarks.Data
 {
     public class TestDbContext : DbContext
     {

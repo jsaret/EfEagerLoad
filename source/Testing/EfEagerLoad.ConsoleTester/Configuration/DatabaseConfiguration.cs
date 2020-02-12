@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using EfEagerLoad.Testing.Data;
-using EfEagerLoad.Testing.Model;
-using EfEagerLoad.Testing.Repository;
+using EfEagerLoad.ConsoleTester.Data;
+using EfEagerLoad.ConsoleTester.Model;
+using EfEagerLoad.ConsoleTester.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EfEagerLoad.Testing.Extensions
+namespace EfEagerLoad.ConsoleTester.Extensions
 {
     public static class EnumerableExtensions
     {

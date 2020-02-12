@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EfEagerLoad.Testing.Model
+namespace EfEagerLoad.Benchmarks.Model
 {
     public interface IEntity
     {

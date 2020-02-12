@@ -3,12 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using EfEagerLoad.Common;
 using EfEagerLoad.ConsoleTester.Configuration;
+using EfEagerLoad.ConsoleTester.Data;
+using EfEagerLoad.ConsoleTester.Extensions;
+using EfEagerLoad.ConsoleTester.Model;
 using EfEagerLoad.Engine;
 using EfEagerLoad.Extensions;
 using EfEagerLoad.IncludeStrategies;
-using EfEagerLoad.Testing.Data;
-using EfEagerLoad.Testing.Extensions;
-using EfEagerLoad.Testing.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

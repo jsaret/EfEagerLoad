@@ -1,6 +1,6 @@
 ﻿using System;
 using BenchmarkDotNet.Running;
-using EfEagerLoad.Benchmarks.Miscellaneous;
+using EfEagerLoad.Benchmarks.Benchmarks;
 
 namespace EfEagerLoad.Benchmarks
 {
@@ -8,7 +8,7 @@ namespace EfEagerLoad.Benchmarks
     {
         static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<General>();
+            var summary = BenchmarkRunner.Run<GeneralBenchmarks>();
         }
     }
 }

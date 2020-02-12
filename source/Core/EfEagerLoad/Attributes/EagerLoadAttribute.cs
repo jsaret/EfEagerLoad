@@ -5,9 +5,9 @@ namespace EfEagerLoad.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class EagerLoadAttribute : Attribute
     {
-        public const int DefaultMaxDepth = 7;
+        public const int DefaultMaxDepth = 6;
         public const int DefaultMaxDepthPosition = 8;
-        public const int DefaultMaxRootTypeCount = 2;
+        public const int DefaultMaxRootTypeCount = 3;
         public const int DefaultMaxTypeCount = 3;
 
         /// <summary>Initializes a new instance of the <see cref="EagerLoadAttribute"/> class.</summary>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using EfEagerLoad.ConsoleTester.Extensions;
 using EfEagerLoad.ConsoleTester.Logging;
-using EfEagerLoad.Testing.Extensions;
-using EfEagerLoad.Testing.Model;
-using EfEagerLoad.Testing.Repository;
+using EfEagerLoad.ConsoleTester.Model;
+using EfEagerLoad.ConsoleTester.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

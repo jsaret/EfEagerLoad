@@ -29,8 +29,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Benchmarks", "Testing\EfEagerLoad.Benchmarks\EfEagerLoad.Benchmarks.csproj", "{D158F3D3-B620-4F45-8209-14029C09AB25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfEagerLoad.Testing", "Testing\EfEagerLoad.Testing\EfEagerLoad.Testing.csproj", "{B328E249-C343-45CC-8D96-91AE71FD10DB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{D158F3D3-B620-4F45-8209-14029C09AB25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D158F3D3-B620-4F45-8209-14029C09AB25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D158F3D3-B620-4F45-8209-14029C09AB25}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B328E249-C343-45CC-8D96-91AE71FD10DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,7 +61,6 @@ Global
 		{AE280F40-39A0-4352-AC72-E4B61898A984} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
 		{769D7A38-D520-430C-B689-463064BCA3E5} = {DE2BFEAD-84E6-45F0-AFF4-BF79DFD953C6}
 		{D158F3D3-B620-4F45-8209-14029C09AB25} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
-		{B328E249-C343-45CC-8D96-91AE71FD10DB} = {31C14B97-36F7-4D01-9B4A-E15A5373D709}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D04A5152-78E1-4E33-B5EE-7871CF3724FF}

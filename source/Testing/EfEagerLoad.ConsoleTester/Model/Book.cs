@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using EfEagerLoad.Attributes;
 
-namespace EfEagerLoad.Testing.Model
+namespace EfEagerLoad.ConsoleTester.Model
 {
-    public class Author
+    public class Book
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,6 +14,12 @@ namespace EfEagerLoad.Testing.Model
         public string Name { get; set; }
 
         [EagerLoad]
-        public virtual IList<Book> Books { get; set; } = new List<Book>();
+        public virtual Publisher Publisher { get; set; }
+
+        [EagerLoad]
+        public virtual Category Category { get; set; }
+
+        [EagerLoad]
+        public virtual Author Author { get; set; }
     }
 }

@@ -38,7 +38,7 @@ namespace EfEagerLoad.Common
 
         public ReadOnlySpan<char> CurrentIncludePathSpan => CurrentIncludePath.AsSpan();
 
-        public string ParentIncludePath { get; private set; } = string.Empty;
+        internal string ParentIncludePath { get; private set; } = string.Empty;
 
         public IEnumerable<INavigation> NavigationPath => _navigationPath;
 

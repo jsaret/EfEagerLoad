@@ -6,8 +6,8 @@ namespace EfEagerLoad.Tests.Testing
 {
     public class TestDbContext : DbContext
     {
-        public static readonly TestDbContext Instance = new TestDbContext(new DbContextOptionsBuilder<TestDbContext>().Options);
-            //.UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        public static readonly TestDbContext Instance = new TestDbContext(new DbContextOptionsBuilder<TestDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
 
         public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
         {

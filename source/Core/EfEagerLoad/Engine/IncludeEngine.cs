@@ -3,23 +3,30 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using EfEagerLoad.Common;
-using Microsoft.EntityFrameworkCore;
 
 namespace EfEagerLoad.Engine
 {
     public class IncludeEngine
     {
-        private static readonly IncludeFinder CachedIncludeBuilder = new IncludeFinder();
-
-        private readonly IncludeFinder _includeFinder;
         private static readonly ConcurrentDictionary<Type, IList<string>> CachedIncludePaths = new ConcurrentDictionary<Type, IList<string>>();
 
-        public IncludeEngine() : this(CachedIncludeBuilder) { }
+        private static readonly IncludeFinder CachedIncludeFinder = new IncludeFinder();
+        private static readonly QueryIncluder CachedQueryIncluder = new QueryIncluder();
 
-        public IncludeEngine(IncludeFinder includeFinder)
+        private readonly IncludeFinder _includeFinder;
+        private readonly QueryIncluder _queryIncluder;
+
+
+        public IncludeEngine() : this(CachedIncludeFinder) { }
+
+        public IncludeEngine(IncludeFinder includeFinder) : this(includeFinder, CachedQueryIncluder) { }
+
+        public IncludeEngine(IncludeFinder includeFinder, QueryIncluder queryIncluder)
         {
             Guard.IsNotNull(nameof(includeFinder), includeFinder);
+            Guard.IsNotNull(nameof(queryIncluder), queryIncluder);
             _includeFinder = includeFinder;
+            _queryIncluder = queryIncluder;
         }
 
 
@@ -42,8 +49,9 @@ namespace EfEagerLoad.Engine
             }
             
             var includePaths = GetPreFilteredIncludePaths(context);
+            context.IncludePathsToInclude = includePaths.ToArray();
             
-            return GetQueryableWithIncludePaths(query, context, includePaths);
+            return _queryIncluder.GetQueryableWithIncludePaths(query, context);
         }
 
         private IEnumerable<string> GetPreFilteredIncludePaths(EagerLoadContext context)
@@ -72,17 +80,6 @@ namespace EfEagerLoad.Engine
                 }
                 default: throw new ArgumentOutOfRangeException();
             }
-        }
-
-        private static IQueryable<TEntity> GetQueryableWithIncludePaths<TEntity>(IQueryable<TEntity> query, 
-            EagerLoadContext context, IEnumerable<string> includeStatements) where TEntity : class
-        {
-            if (context.IncludePathsToInclude.Count == 0) { return query; }
-
-            context.IncludeStrategy.FilterIncludePathsBeforeInclude(context);
-            context.IncludeStrategy.ExecuteBeforeInclude(context);
-
-            return includeStatements.Aggregate(query, (current, navigationPath) => current.Include(navigationPath));
         }
     }
 }

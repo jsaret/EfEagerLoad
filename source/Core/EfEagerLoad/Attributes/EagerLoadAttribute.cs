@@ -14,8 +14,8 @@ namespace EfEagerLoad.Attributes
         /// <param name="always">If set to <c>true</c> will always Eager Load this Property regardless of other rules.</param>
         /// <param name="onlyOnRoot">If set to <c>true</c> will only Eager Load this Property if it's on the Root Entity being loaded.</param>
         /// <param name="notOnRoot">If set to <c>true</c> will not Eager Load this Property if it's on the Root Entity being loaded.</param>
-        /// <param name="notIfParentType">
-        /// If set to <c>true</c> will not Eager Load this Property if it's the same type as the Parent Entity being loaded.
+        /// <param name="notIfParentsParentType">
+        /// If set to <c>true</c> will not Eager Load this Property if it's the same type as the Parent's Parent Entity being loaded.
         /// </param>
         /// <param name="notIfRootType">If set to <c>true</c> will not Eager Load this Property if it's the same type as the Root Entity being loaded.
         /// </param>
@@ -26,14 +26,14 @@ namespace EfEagerLoad.Attributes
         /// <param name="maxRootTypeCount">The maximum count for the root type being loaded.</param>
         /// <param name="maxTypeCount">The maximum count for the type being loaded.</param>
         public EagerLoadAttribute(bool always = false, bool onlyOnRoot = false, bool notOnRoot = false, 
-                                    bool notIfParentType = false, bool notIfRootType = false,
+                                    bool notIfParentsParentType = false, bool notIfRootType = false,
                                     int maxDepth = DefaultMaxDepth, int maxDepthPosition = DefaultMaxDepthPosition,
                                     int maxRootTypeCount = DefaultMaxRootTypeCount, int maxTypeCount = DefaultMaxTypeCount)
         {
             Always = always;
             OnlyOnRoot = onlyOnRoot;
             NotOnRoot = notOnRoot;
-            NotIfParentType = notIfParentType;
+            NotIfParentsParentType = notIfParentsParentType;
             NotIfRootType = notIfRootType;
             MaxDepth = maxDepth;
             MaxDepthPosition = maxDepthPosition;
@@ -48,7 +48,7 @@ namespace EfEagerLoad.Attributes
         public bool NotOnRoot { get; }
 
 
-        public bool NotIfParentType { get; }
+        public bool NotIfParentsParentType { get; }
 
         public bool NotIfRootType { get; }
 

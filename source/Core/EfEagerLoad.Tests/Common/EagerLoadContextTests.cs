@@ -14,7 +14,7 @@ namespace EfEagerLoad.Tests.Common
         [Fact]
         public void ShouldDisplayEmpty_ParentIncludePath_WhenNoNavigationsSet()
         {
-            var context = new EagerLoadContext(new Mock<DbContext>().Object, new Mock<IIncludeStrategy>().Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());
 
             Assert.Equal(string.Empty, context.ParentIncludePath);
         }
@@ -22,7 +22,7 @@ namespace EfEagerLoad.Tests.Common
         [Fact]
         public void ShouldDisplayEmpty_CurrentIncludePath_WhenNoNavigationsSet()
         {
-            var context = new EagerLoadContext(new Mock<DbContext>().Object, new Mock<IIncludeStrategy>().Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());
 
             Assert.Equal(string.Empty, context.CurrentIncludePath);
             Assert.Equal(string.Empty.ToCharArray(), context.CurrentIncludePathSpan.ToString());
@@ -31,7 +31,7 @@ namespace EfEagerLoad.Tests.Common
         [Fact]
         public void ShouldDisplayEmpty_ParentIncludePath_WhenAddingFirstNavigation()
         {
-            var context = new EagerLoadContext(new Mock<DbContext>().Object, new Mock<IIncludeStrategy>().Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());
             
             var navigationMock = new Mock<INavigation>();
             navigationMock.Setup(nav => nav.Name).Returns(nameof(Book));
@@ -42,7 +42,7 @@ namespace EfEagerLoad.Tests.Common
         [Fact]
         public void ShouldDisplayCorrect_CurrentIncludePath_WhenAddingFirstNavigation()
         {
-            var context = new EagerLoadContext(new Mock<DbContext>().Object, new Mock<IIncludeStrategy>().Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());
             
             var navigationMock = new Mock<INavigation>();
             navigationMock.Setup(nav => nav.Name).Returns(nameof(Book));
@@ -56,7 +56,7 @@ namespace EfEagerLoad.Tests.Common
         [Fact]
         public void ShouldDisplayCorrect_ParentIncludePath_WhenMoreNavigationsAdded()
         {
-            var context = new EagerLoadContext(new Mock<DbContext>().Object, new Mock<IIncludeStrategy>().Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());
             
             var bookNavigationMock = new Mock<INavigation>();
             bookNavigationMock.Setup(nav => nav.Name).Returns(nameof(Book));
@@ -78,7 +78,7 @@ namespace EfEagerLoad.Tests.Common
         [Fact]
         public void ShouldDisplayCorrect_CurrentIncludePath_WhenMoreNavigationsAdded()
         {
-            var context = new EagerLoadContext(new Mock<DbContext>().Object, new Mock<IIncludeStrategy>().Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());
 
             var bookNavigationMock = new Mock<INavigation>();
             bookNavigationMock.Setup(nav => nav.Name).Returns(nameof(Book));
@@ -101,7 +101,7 @@ namespace EfEagerLoad.Tests.Common
         [Fact]
         public void ShouldDisplayCorrect_ParentIncludePath_WhenRemovingNavigation()
         {
-            var context = new EagerLoadContext(new Mock<DbContext>().Object, new Mock<IIncludeStrategy>().Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());
 
             var bookNavigationMock = new Mock<INavigation>();
             bookNavigationMock.Setup(nav => nav.Name).Returns(nameof(Book));
@@ -130,7 +130,7 @@ namespace EfEagerLoad.Tests.Common
         [Fact]
         public void ShouldDisplayCorrect_CurrentIncludePath_WhenRemovingNavigation()
         {
-            var context = new EagerLoadContext(new Mock<DbContext>().Object, new Mock<IIncludeStrategy>().Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());
 
             var bookNavigationMock = new Mock<INavigation>();
             bookNavigationMock.Setup(nav => nav.Name).Returns(nameof(Book));

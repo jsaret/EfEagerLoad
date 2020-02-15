@@ -23,7 +23,6 @@
   <ItemGroup>
     <Folder Include="Attributes\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Testing\Acceptance\" />
   </ItemGroup>
 
 </Project>

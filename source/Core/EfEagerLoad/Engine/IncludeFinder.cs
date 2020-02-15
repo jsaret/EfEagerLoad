@@ -10,20 +10,20 @@ namespace EfEagerLoad.Engine
 
         private readonly NavigationFinder _navigationFinder;
 
-        public IncludeFinder() : this(CachedNavigationFinder) { }
+        internal IncludeFinder() : this(CachedNavigationFinder) { }
 
-        public IncludeFinder(NavigationFinder navigationFinder)
+        internal IncludeFinder(NavigationFinder navigationFinder)
         {
             _navigationFinder = navigationFinder;
         }
 
-        public virtual IList<string> BuildIncludePathsForRootType(EagerLoadContext context)
+        internal virtual IList<string> BuildIncludePathsForRootType(EagerLoadContext context)
         {
             BuildIncludesForEagerLoadContext(context);
             return context.IncludePathsToInclude;
         }
 
-        internal void BuildIncludesForEagerLoadContext(EagerLoadContext context)
+        private void BuildIncludesForEagerLoadContext(EagerLoadContext context)
         {
             BuildIncludesForEagerLoadContext();
 
@@ -39,84 +39,6 @@ namespace EfEagerLoad.Engine
                     {
                         context.IncludePathsToInclude.Add(context.CurrentIncludePath);
                         BuildIncludesForEagerLoadContext();
-                    }
-
-                    context.RemoveCurrentNavigation();
-                }
-            }
-        }
-
-
-        internal IList<string> BuildIncludePathsForRootType2_StringCreate(EagerLoadContext context)
-        {
-            BuildIncludesForEagerLoadContext();
-
-            return context.IncludePathsToInclude;
-
-            void BuildIncludesForEagerLoadContext()
-            {
-                var navigationsToConsider = _navigationFinder.GetNavigationsForType(context, context.CurrentType ?? context.RootType);
-
-                foreach (var navigation in navigationsToConsider)
-                {
-                    context.SetCurrentNavigation2(navigation);
-
-                    if (context.IncludeStrategy.ShouldIncludeCurrentNavigation(context))
-                    {
-                        context.IncludePathsToInclude.Add(context.CurrentIncludePath);
-                        BuildIncludesForEagerLoadContext();
-                    }
-
-                    context.RemoveCurrentNavigation();
-                }
-            }
-        }
-
-        internal IList<string> BuildIncludePathsForRootType_Generator(EagerLoadContext context)
-        {
-            do {} while (BuildIncludesForEagerLoadContext().GetEnumerator().MoveNext());
-            //foreach (var _ in BuildIncludesForEagerLoadContext()) { }
-
-            return context.IncludePathsToInclude;
-
-            IEnumerable<bool> BuildIncludesForEagerLoadContext()
-            {
-                var navigationsToConsider = _navigationFinder.GetNavigationsForType(context, context.CurrentType ?? context.RootType);
-                foreach (var navigation in navigationsToConsider)
-                {
-                    context.SetCurrentNavigation(navigation);
-
-                    if (context.IncludeStrategy.ShouldIncludeCurrentNavigation(context))
-                    {
-                        context.IncludePathsToInclude.Add(context.CurrentIncludePath);
-
-                        foreach (var _ in BuildIncludesForEagerLoadContext()) { yield return default; }
-                    }
-
-                    context.RemoveCurrentNavigation();
-                }
-            }
-        }
-
-
-        internal IList<string> BuildIncludePathsForRootType_Iterator(EagerLoadContext context)
-        {
-            foreach (var _ in BuildIncludesForEagerLoadContext()) { }
-
-            return context.IncludePathsToInclude;
-
-            IEnumerable<bool> BuildIncludesForEagerLoadContext()
-            {
-                var navigationsToConsider = _navigationFinder.GetNavigationsForType(context, context.CurrentType ?? context.RootType);
-                foreach (var navigation in navigationsToConsider)
-                {
-                    context.SetCurrentNavigation(navigation);
-
-                    if (context.IncludeStrategy.ShouldIncludeCurrentNavigation(context))
-                    {
-                        context.IncludePathsToInclude.Add(context.CurrentIncludePath);
-
-                        foreach (var _ in BuildIncludesForEagerLoadContext()) { yield return default; }
                     }
 
                     context.RemoveCurrentNavigation();

@@ -30,7 +30,7 @@ namespace EfEagerLoad.Extensions
                                                                                 where TEntity : class
                                                                                 where TAttribute : Attribute
         {
-            return query.EagerLoadMatching(dbContext, new AttributeExistsIncludeStrategy<TAttribute>(), includeExecution, navigationPropertiesToIgnore);
+            return query.EagerLoadWithStrategy(dbContext, new AttributeExistsIncludeStrategy<TAttribute>(), includeExecution, navigationPropertiesToIgnore);
         }
 
     }

@@ -28,7 +28,7 @@ namespace EfEagerLoad.Extensions
         public static IQueryable<TEntity> EagerLoad<TEntity>(this IQueryable<TEntity> query, DbContext dbContext, IncludeExecution includeExecution,
                                                                 params string[] ignoredNavigationProperties) where TEntity : class
         {
-            return query.EagerLoadMatching(dbContext, CachedEagerLoadAttributeIncludeStrategy, includeExecution, ignoredNavigationProperties);
+            return query.EagerLoadWithStrategy(dbContext, CachedEagerLoadAttributeIncludeStrategy, includeExecution, ignoredNavigationProperties);
         }
 
     }

@@ -8,7 +8,7 @@ namespace EfEagerLoad.Engine
 {
     public class IncludeEngine
     {
-        private static readonly ConcurrentDictionary<Type, IList<string>> CachedIncludePaths = new ConcurrentDictionary<Type, IList<string>>();
+        internal static readonly ConcurrentDictionary<Type, IList<string>> CachedIncludePaths = new ConcurrentDictionary<Type, IList<string>>();
 
         private static readonly IncludeFinder CachedIncludeFinder = new IncludeFinder();
         private static readonly QueryIncluder CachedQueryIncluder = new QueryIncluder();
@@ -63,12 +63,13 @@ namespace EfEagerLoad.Engine
                 case IncludeExecution.Cached:
                 {
                     context.IncludePathsToInclude = CachedIncludePaths.GetOrAdd(context.RootType, (type) =>
-                        _includeFinder.BuildIncludePathsForRootType(context));
+                        _includeFinder.BuildIncludePathsForRootType(context)?.ToList() ?? new List<string>(0));
                     break;
                 }
-                case IncludeExecution.UseOnlyCache:
+                case IncludeExecution.ReadOnlyCache:
                 {
-                    context.IncludePathsToInclude = CachedIncludePaths.ContainsKey(context.RootType) ? CachedIncludePaths.GetValueOrDefault(context.RootType) : 
+                    context.IncludePathsToInclude = CachedIncludePaths.ContainsKey(context.RootType) ? 
+                            CachedIncludePaths.GetValueOrDefault(context.RootType) : 
                             _includeFinder.BuildIncludePathsForRootType(context);
                     break;
                 }
@@ -80,11 +81,17 @@ namespace EfEagerLoad.Engine
                 case IncludeExecution.Recache:
                 {
                     context.IncludePathsToInclude = _includeFinder.BuildIncludePathsForRootType(context);
-                    CachedIncludePaths.TryAdd(context.RootType, context.IncludePathsToInclude);
+                    CachedIncludePaths.AddOrUpdate(context.RootType,
+                        (t) => context.IncludePathsToInclude?.ToList() ?? new List<string>(0),
+                        (tv, l) => context.IncludePathsToInclude?.ToList() ?? new List<string>(0));
                     break;
                 }
                 default: throw new ArgumentOutOfRangeException();
             }
+
+            context.IncludePathsToInclude = (context.IncludePathsToInclude == null) ? 
+                new List<string>(0) : 
+                new List<string>(context.IncludePathsToInclude);
         }
     }
 }

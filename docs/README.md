@@ -3,44 +3,38 @@
 
 # EfEagerLoad
 
-###### Not Production ready - Release targeted end of Feb 2020 / mid March 2020 
-###### (<PreReleaseConstructionSite.gif>)
+###### Not Production ready - Release targeted end of Feb 2020
 
-EfEagerLoad allows you to add eager loading to your Entities automatically with minimal setup.
+EfEagerLoad allows you to add eager loading to your Entity querying when using Entity Framework Core with minimal setup.
 
-It includes various extension points to selectively control how your entities are eager loaded such:
+It includes various extension points to selectively control how your entities are eager loaded such as:
 * Built-In configurable Attribute, 
 * Custom user marker Attribute
 * Automatically
-* Custom user Predicates
+* Custom input Predicates
 * Custom built Strategies
-
-
-While the built-in eager loading *Strategies* generally  Internal caching is built-in to speed up the  of the resulting Include Functions to execute for the Entities being used is built-in but only rudimentary at the moment (limitations).
-
-___
+* Input Parameters
 
 ## Contents
 - [License](#license)
 - [Why use EfEagerLoader](#Why-use-EfEagerLoader)
+- [How it Works](#How-it-Works)
 - [Usage](#Usage)
   - [Setup](#Setup)
   - [Entity Framework Integration](#Entity-Framework-Integrating)
   - [Repository Pattern Integration](#Repository-Pattern-Integration)
   - [Controlling what gets Eager Loaded](#Controlling-what-gets-Eager-Loaded)
-    - [Input Parameters](#Input-Parameters)
-      - [Navigation Paths](#Filtering-Navigation-Paths)
-    - [Built-in Attribute](#Built-in-Attribute)
+    - [EagerLoad Attribute](#EagerLoad-Attribute)
     - [Custom Attribute](#Custom-Attribute)
     - [Automatically](#Automatically)
-    - [Functions](#Functions)
+    - [Predicates](#Predicates)
     - [Custom Strategy](#CustomStrategy)
-    - [EagerLoadContext](#EagerLoadContext)
-  - [Advanced Usage](#Advanced-Usage)
     - [Input Parameters](#Input-Parameters)
-      - [Execution and Caching](#Execution-and-Caching)
-  - [Execution and Caching](#Execution-and-Caching)
-  - [Extending](#Development)
+      - [Execution Control Parameters](#Execution-Control-Parameters)
+      - [Navigation Paths Parameters](#Navigation-Paths-Parameters)
+  - [Advanced Usage](#Advanced-Usage)
+    - [Caching and IncludeExecution](#Caching-and-IncludeExecution)
+    - [Custom Strategy Implementation](#Development)
   - [Here be Dragons](#Here-be-Dragons) 
 - [Development](#Development) 
 - [Contact](#Contact) 
@@ -53,7 +47,26 @@ This project is released under an MIT license. See further license details [here
 
 ## Why use EfEagerLoader
 
-Entity Framework tends to lean toward not hiding it too much to get the most out of it
+Maybe you shouldn't ... Include (ThenInclude) statements aren't really that hard to do ...
+
+Entity Framework often doesn't lend itself well to being entirely hidden entirely from developers - such as behind a single implementation of a Repository.
+One needs to often leak the concerns of the framework into the developers world such as dealing with *Detached* Entities, eager loading, streaming, early termination..
+
+This often leads to alot of repeated code such as Include statements especially if eager loading all properties of an Entity's graph is the most common loading strategy. 
+
+To solve this develpers often have derived Repositories / helper classes to centralize this querying logic. 
+This often leads to many Entity querying methods there that the developer needs to be aware of and distinguish between as to which one is right (or just revert back to just doing the querying manually).
+
+Forgetting to eager load when it should be done will also lead to bad performance characteristics in your code with issues such as N+1 queries.
+
+EfEagerLoader can help eliminate or minimize many of these issues.
+
+## How it Works
+
+[Navigation and IncludePath destription...]
+
+The eager load engine includes built-in controllable caching of the *IncludePaths* results to speed up the resulting Include Functions calls to execute for the Entities being loaded. 
+The cached results can be further filtered on a per call basis.
 
 ## Usage
 

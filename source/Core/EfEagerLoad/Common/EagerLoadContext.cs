@@ -11,7 +11,6 @@ namespace EfEagerLoad.Common
     public class EagerLoadContext
     {
         private static readonly AsyncLocal<IServiceProvider> ThreadLocalServiceProvider = new AsyncLocal<IServiceProvider>();
-        private static readonly char SeparatorCharacter = char.Parse(".");
 
         private readonly Stack<INavigation> _navigationPath = new Stack<INavigation>();
 
@@ -68,23 +67,6 @@ namespace EfEagerLoad.Common
             CurrentIncludePath = (NavigationPath.Skip(1).Any()) ?
                                 $"{CurrentIncludePath}.{CurrentNavigation.Name}" :
                                 CurrentNavigation.Name;
-            ParentIncludePath = CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
-        }
-
-        internal void SetCurrentNavigation2(INavigation navigation)
-        {
-            if (navigation == null) { return; }
-
-            _navigationPath.Push(navigation);
-            CurrentIncludePath = (NavigationPath.Skip(1).Any()) ?
-                string.Create(CurrentIncludePath.Length + 1 + CurrentNavigation.Name.Length, this,
-                    (chars, state) =>
-                    {
-                        state.CurrentIncludePath.AsSpan().CopyTo(chars);
-                        chars[state.CurrentIncludePath.Length] = SeparatorCharacter;
-                        state.CurrentNavigation.Name.AsSpan().CopyTo(chars.Slice(state.CurrentIncludePath.Length + 1));
-                    }) :
-                CurrentNavigation.Name;
             ParentIncludePath = CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
         }
 

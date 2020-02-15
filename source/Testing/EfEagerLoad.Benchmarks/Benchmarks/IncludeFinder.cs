@@ -30,22 +30,6 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
             return _includeFinder.BuildIncludePathsForRootType(_context);
         }
 
-        [Benchmark(OperationsPerInvoke = OperationsPerInvoke)]
-        public IList<string> Recurse_StringCreate()
-        {
-            _context.IncludePathsToInclude.Clear();
-            return _includeFinder.BuildIncludePathsForRootType2_StringCreate(_context);
-        }
-
-        [Benchmark(OperationsPerInvoke = OperationsPerInvoke)]
-        public IList<string> Generator_Test()
-        {
-            _context.IncludePathsToInclude.Clear();
-            return _includeFinder.BuildIncludePathsForRootType_Generator(_context);
-        }
-
-
-
         [GlobalSetup]
         public void GlobalSetup()
         {

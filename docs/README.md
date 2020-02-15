@@ -3,7 +3,7 @@
 
 # EfEagerLoad
 
-##### Not Production ready - Release targeted end of Feb 2020 
+###### Not Production ready - Release targeted end of Feb 2020 / mid March 2020 
 ###### (<PreReleaseConstructionSite.gif>)
 
 EfEagerLoad allows you to add eager loading to your Entities automatically with minimal setup.

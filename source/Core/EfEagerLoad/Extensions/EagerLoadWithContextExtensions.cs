@@ -8,7 +8,7 @@ namespace EfEagerLoad.Extensions
 {
     public static class EagerLoadWithContextExtensions
     {
-        public static readonly IncludeEngine CachedIncludeEngine = new IncludeEngine();
+        private static readonly IncludeEngine CachedIncludeEngine = new IncludeEngine();
 
         internal static IQueryable<TEntity> EagerLoadWithContext<TEntity>(this IQueryable<TEntity> query, EagerLoadContext context)
             where TEntity : class

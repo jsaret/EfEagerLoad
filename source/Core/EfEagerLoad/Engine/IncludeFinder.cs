@@ -4,7 +4,7 @@ using EfEagerLoad.Common;
 
 namespace EfEagerLoad.Engine
 {
-    public class IncludeFinder
+    internal class IncludeFinder
     {
         private static readonly NavigationFinder CachedNavigationFinder = new NavigationFinder();
 
@@ -17,7 +17,7 @@ namespace EfEagerLoad.Engine
             _navigationFinder = navigationFinder;
         }
 
-        public IList<string> BuildIncludePathsForRootType(EagerLoadContext context)
+        public virtual IList<string> BuildIncludePathsForRootType(EagerLoadContext context)
         {
             BuildIncludesForEagerLoadContext(context);
             return context.IncludePathsToInclude;

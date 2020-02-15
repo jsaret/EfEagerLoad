@@ -17,11 +17,9 @@ namespace EfEagerLoad.Engine
         private readonly QueryIncluder _queryIncluder;
 
 
-        public IncludeEngine() : this(CachedIncludeFinder) { }
+        public IncludeEngine() : this(CachedIncludeFinder, CachedQueryIncluder) { }
 
-        public IncludeEngine(IncludeFinder includeFinder) : this(includeFinder, CachedQueryIncluder) { }
-
-        public IncludeEngine(IncludeFinder includeFinder, QueryIncluder queryIncluder)
+        internal IncludeEngine(IncludeFinder includeFinder, QueryIncluder queryIncluder)
         {
             Guard.IsNotNull(nameof(includeFinder), includeFinder);
             Guard.IsNotNull(nameof(queryIncluder), queryIncluder);
@@ -47,36 +45,43 @@ namespace EfEagerLoad.Engine
             {
                 context.RootType = typeof(TEntity);
             }
-            
-            var includePaths = GetPreFilteredIncludePaths(context);
-            context.IncludePathsToInclude = includePaths.ToArray();
-            
+
+            SetupPreFilteredIncludePaths(context);
+
+            if (context.IncludePathsToInclude.Count == 0) { return query; }
+
+            context.IncludeStrategy.FilterIncludePathsBeforeInclude(context);
+            context.IncludeStrategy.ExecuteBeforeInclude(context);
+
             return _queryIncluder.GetQueryableWithIncludePaths(query, context);
         }
 
-        private IEnumerable<string> GetPreFilteredIncludePaths(EagerLoadContext context)
+        private void SetupPreFilteredIncludePaths(EagerLoadContext context)
         {
             switch (context.IncludeExecution)
             {
                 case IncludeExecution.Cached:
                 {
-                    return CachedIncludePaths.GetOrAdd(context.RootType, (type) =>
+                    context.IncludePathsToInclude = CachedIncludePaths.GetOrAdd(context.RootType, (type) =>
                         _includeFinder.BuildIncludePathsForRootType(context));
+                    break;
                 }
                 case IncludeExecution.UseOnlyCache:
                 {
-                    return CachedIncludePaths.ContainsKey(context.RootType) ? CachedIncludePaths.GetValueOrDefault(context.RootType) : 
+                    context.IncludePathsToInclude = CachedIncludePaths.ContainsKey(context.RootType) ? CachedIncludePaths.GetValueOrDefault(context.RootType) : 
                             _includeFinder.BuildIncludePathsForRootType(context);
+                    break;
                 }
                 case IncludeExecution.NoCache:
                 {
-                    return _includeFinder.BuildIncludePathsForRootType(context);
+                    context.IncludePathsToInclude = _includeFinder.BuildIncludePathsForRootType(context);
+                    break;
                 }
                 case IncludeExecution.Recache:
                 {
-                    var includeStatements = _includeFinder.BuildIncludePathsForRootType(context);
-                    CachedIncludePaths.TryAdd(context.RootType, includeStatements);
-                    return includeStatements;
+                    context.IncludePathsToInclude = _includeFinder.BuildIncludePathsForRootType(context);
+                    CachedIncludePaths.TryAdd(context.RootType, context.IncludePathsToInclude);
+                    break;
                 }
                 default: throw new ArgumentOutOfRangeException();
             }

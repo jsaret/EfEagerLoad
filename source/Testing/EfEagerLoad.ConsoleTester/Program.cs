@@ -28,7 +28,7 @@ namespace EfEagerLoad.ConsoleTester
             //{
             //    Console.WriteLine();
             //}
-
+            
 
             Func<Task> runFunc = Run;
             await runFunc.RunInConsole();

@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfEagerLoad.Engine
 {
-    public class NavigationFinder
+    internal class NavigationFinder
     {
         private static readonly ConcurrentDictionary<Type, INavigation[]> CachedTypeNavigations = new ConcurrentDictionary<Type, INavigation[]>();
 
-        public IEnumerable<INavigation> GetNavigationsForType(EagerLoadContext context, Type type)
+        internal IEnumerable<INavigation> GetNavigationsForType(EagerLoadContext context, Type type)
         {
             return CachedTypeNavigations.GetOrAdd(type, typeToFind => context.DbContext.Model.FindEntityType(typeToFind).GetNavigations().ToArray());
         }

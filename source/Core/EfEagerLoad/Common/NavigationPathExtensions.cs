@@ -2,11 +2,11 @@
 
 namespace EfEagerLoad.Common
 {
-    public static class NavigationPathExtensions
+    internal static class NavigationPathExtensions
     {
         private static readonly char SeparatorCharacter = char.Parse(".");
 
-        public static ReadOnlySpan<char> GetParentIncludePathSpan(this ReadOnlySpan<char> includePath)
+        internal static ReadOnlySpan<char> GetParentIncludePathSpan(this ReadOnlySpan<char> includePath)
         {
             if (includePath.Length == 0) { return string.Empty.ToCharArray(); }
 

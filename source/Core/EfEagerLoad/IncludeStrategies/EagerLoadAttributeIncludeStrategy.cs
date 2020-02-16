@@ -2,38 +2,51 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Reflection;
 using EfEagerLoad.Attributes;
 using EfEagerLoad.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfEagerLoad.IncludeStrategies
 {
     public class EagerLoadAttributeIncludeStrategy : IncludeStrategy
     {
-        private static readonly ConcurrentDictionary<PropertyInfo, EagerLoadAttribute> EagerLoadAttributeCache = new ConcurrentDictionary<PropertyInfo, EagerLoadAttribute>();
+        internal static readonly ConcurrentDictionary<INavigation, EagerLoadAttribute> EagerLoadAttributeCache = new ConcurrentDictionary<INavigation, EagerLoadAttribute>();
 
         public override bool ShouldIncludeCurrentNavigation(EagerLoadContext context)
         {
-            if (context.CurrentNavigation?.PropertyInfo == null) { return true; }
+            if (context.CurrentNavigation?.PropertyInfo == null) { return false; }
 
             //Find EagerLoad Attributes
-            var attribute = EagerLoadAttributeCache.GetOrAdd(context.CurrentNavigation.PropertyInfo, property => 
-                                                                    Attribute.GetCustomAttributes(property, typeof(EagerLoadAttribute))
+            var attribute = EagerLoadAttributeCache.GetOrAdd(context.CurrentNavigation, nav => 
+                    Attribute.GetCustomAttributes(nav.PropertyInfo, typeof(EagerLoadAttribute))
                                                                     .OfType<EagerLoadAttribute>().FirstOrDefault());
 
             // No EagerLoad Attribute
             if (attribute == null) { return false; }
 
-            if (attribute.MaxDepth < context.NavigationPath.Count()) { return false; }
+            //Always
+            if (attribute.Always) { return true; }
 
-            //On Root Type vs Others
-            if (context.NavigationPath.Count() == 1 && ShouldNotEagerLoadOffRoot(context, attribute)) { return false; }
+            //Never
+            if (attribute.Never) { return false; }
 
-            if (context.NavigationPath.Skip(1).Any() && ShouldOnlyEagerLoadOffRootType(context, attribute)) { return false; }
+            //MaxDepth
+            if (attribute.MaxDepth < context.NavigationPath.Count) { return false; }
 
-            // Max Depth
-            if (!CanTypeBeLazyLoadedBasedOnAllowedDepthLimit(context, attribute)) { return false; }
+            //NotOnRoot
+            if (context.NavigationPath.Count == 1 && attribute.NotOnRoot && 
+                context.CurrentNavigation.GetNavigationType() == context.RootType) { return false; }
+
+            //OnlyOnRoot
+            if (context.NavigationPath.Count > 1 && attribute.OnlyOnRoot && 
+                context.CurrentNavigation.GetNavigationType() == context.RootType) { return false; }
+
+            //NotIfRootType
+            if (context.CurrentNavigation.GetNavigationType() == context.RootType) { return false; }
+
+            // Max Path Depth
+            //if (attribute.NotIfRootType CanTypeBeLazyLoadedBasedOnAllowedDepthLimit(context, attribute)) { return false; }
             //
 
 
@@ -42,18 +55,11 @@ namespace EfEagerLoad.IncludeStrategies
             return true;
         }
 
-        internal static bool ShouldNotEagerLoadOffRoot(EagerLoadContext context, EagerLoadAttribute attribute)
-        {
-            return attribute.NotOnRoot && context.CurrentNavigation.DeclaringType.ClrType == context.RootType;
-        }
-
-        internal static bool ShouldOnlyEagerLoadOffRootType(EagerLoadContext context, EagerLoadAttribute attribute)
-        {
-            return attribute.NotOnRoot && context.CurrentNavigation.DeclaringType.ClrType == context.RootType;
-        }
         
         internal static bool CanTypeBeLazyLoadedBasedOnAllowedDepthLimit(EagerLoadContext context, EagerLoadAttribute eagerLoadAttribute)
         {
+            //if ()
+            //var firstRootNavigation = 
             var currentType = typeof(IEnumerable).IsAssignableFrom(context.CurrentNavigation?.ClrType) ? context.CurrentNavigation?.GetTargetType().ClrType :
                 context.CurrentNavigation?.ClrType;
 
@@ -71,3 +77,20 @@ namespace EfEagerLoad.IncludeStrategies
 
     }
 }
+
+
+
+/*
+
+--Always = always;
+--Never = never;
+--OnlyOnRoot = onlyOnRoot;
+--NotOnRoot = notOnRoot;
+NotIfParentsParentType = notIfParentsParentType;
+--NotIfRootType = notIfRootType;
+--MaxDepth = maxDepth;
+MaxDepthPosition = maxDepthPosition;
+MaxRootTypeCount = maxRootTypeCount;
+MaxTypeCount = maxTypeCount;
+
+*/

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using EfEagerLoad.Common;
 using EfEagerLoad.Engine;
 using EfEagerLoad.Tests.Testing.Model;
@@ -11,12 +10,18 @@ using Xunit;
 
 namespace EfEagerLoad.Tests.Engine
 {
-    public class IncludeEngineTests
+    public class IncludeEngineTests : IDisposable
     {
 
         public IncludeEngineTests()
         {
+            EagerLoadContext.SkipEntityFrameworkCheckForTesting = true;
             IncludeEngine.CachedIncludePaths.Clear();
+        }
+
+        public void Dispose()
+        {
+            EagerLoadContext.SkipEntityFrameworkCheckForTesting = false;
         }
 
         [Fact]

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using EfEagerLoad.Common;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace EfEagerLoad.Engine
 {
@@ -27,7 +28,6 @@ namespace EfEagerLoad.Engine
             _queryIncluder = queryIncluder;
         }
 
-
         public IQueryable<TEntity> RunIncludesForType<TEntity>(IQueryable<TEntity> query, EagerLoadContext context) where TEntity : class
         {
             Guard.IsNotNull(nameof(query), query);
@@ -35,11 +35,7 @@ namespace EfEagerLoad.Engine
 
             if (context.IncludeExecution == IncludeExecution.Skip) { return query; }
 
-            // Bit of a cheat as will stop the code from doing any Includes without Entity Framework being attached to a Query or going through missions ...
-            // Was impeding various evaluations & comparisons so out for now.
-            // Maybe worth while doing a build directive to include for Published builds?
-
-            //if (!(query.Provider is EntityQueryProvider)) { return query; }
+            if (!(query.Provider is EntityQueryProvider) && !EagerLoadContext.SkipEntityFrameworkCheckForTesting) { return query; }
 
             if (context.RootType == null)
             {
@@ -52,6 +48,8 @@ namespace EfEagerLoad.Engine
 
             context.IncludeStrategy.FilterIncludePathsBeforeInclude(context);
             context.IncludeStrategy.ExecuteBeforeInclude(context);
+
+            if (EagerLoadContext.SkipQueryIncludeForTesting) { return query; }
 
             return _queryIncluder.GetQueryableWithIncludePaths(query, context);
         }
@@ -83,7 +81,7 @@ namespace EfEagerLoad.Engine
                     context.IncludePathsToInclude = _includeFinder.BuildIncludePathsForRootType(context);
                     CachedIncludePaths.AddOrUpdate(context.RootType,
                         (t) => context.IncludePathsToInclude?.ToList() ?? new List<string>(0),
-                        (tv, l) => context.IncludePathsToInclude?.ToList() ?? new List<string>(0));
+                        (t, l) => context.IncludePathsToInclude?.ToList() ?? new List<string>(0));
                     break;
                 }
                 default: throw new ArgumentOutOfRangeException();

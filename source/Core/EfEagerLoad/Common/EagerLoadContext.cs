@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using EfEagerLoad.Engine;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +10,9 @@ namespace EfEagerLoad.Common
     public class EagerLoadContext
     {
         private static readonly AsyncLocal<IServiceProvider> ThreadLocalServiceProvider = new AsyncLocal<IServiceProvider>();
+        public static bool SkipEntityFrameworkCheckForTesting { get; set; } = false;
+        public static bool SkipQueryIncludeForTesting { get; set; } = false;
+        internal static char SeparatorChar = char.Parse("."); 
 
         private readonly Stack<INavigation> _navigationPath = new Stack<INavigation>();
 
@@ -31,15 +33,11 @@ namespace EfEagerLoad.Common
 
         public Type CurrentType => CurrentNavigation?.GetNavigationType();
 
-        public INavigation CurrentNavigation => (_navigationPath.Any()) ? _navigationPath.Peek() : null;
+        public INavigation CurrentNavigation => (_navigationPath.Count > 0) ? _navigationPath.Peek() : null;
 
         public string CurrentIncludePath { get; private set; } = string.Empty;
 
-        public ReadOnlySpan<char> CurrentIncludePathSpan => CurrentIncludePath.AsSpan();
-
-        internal string ParentIncludePath { get; private set; } = string.Empty;
-
-        public IEnumerable<INavigation> NavigationPath => _navigationPath;
+        public IReadOnlyCollection<INavigation> NavigationPath => _navigationPath;
 
         public DbContext DbContext { get; }
 
@@ -51,7 +49,7 @@ namespace EfEagerLoad.Common
 
         public IList<string> IncludePathsToInclude { get; internal set; } = new List<string>();
 
-        public IDictionary<string, object> Bag = new Dictionary<string, object>(5);
+        public IDictionary<string, object> Bag = new Dictionary<string, object>(1);
 
         public IServiceProvider ServiceProvider
         {
@@ -64,10 +62,9 @@ namespace EfEagerLoad.Common
             if(navigation == null) { return; }
 
             _navigationPath.Push(navigation);
-            CurrentIncludePath = (NavigationPath.Skip(1).Any()) ?
+            CurrentIncludePath = (_navigationPath.Count > 1) ?
                                 $"{CurrentIncludePath}.{CurrentNavigation.Name}" :
                                 CurrentNavigation.Name;
-            ParentIncludePath = CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
         }
 
         internal void RemoveCurrentNavigation()
@@ -75,10 +72,9 @@ namespace EfEagerLoad.Common
             if (_navigationPath.Count == 0) { return; }
 
             _navigationPath.Pop();
-            CurrentIncludePath = (NavigationPath.Skip(1).Any()) ?
-                                    ParentIncludePath :
+            CurrentIncludePath = (_navigationPath.Count > 1) ?
+                                    CurrentIncludePath.AsSpan().GetParentIncludePathSpan().ToString() :
                                     CurrentNavigation?.Name ?? string.Empty;
-            ParentIncludePath = CurrentIncludePathSpan.GetParentIncludePathSpan().ToString();
         }
 
         public static void InitializeServiceProvider(IServiceProvider serviceProvider)

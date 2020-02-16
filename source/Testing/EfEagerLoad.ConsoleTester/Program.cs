@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using EfEagerLoad.Common;
 using EfEagerLoad.ConsoleTester.Configuration;
@@ -22,30 +23,39 @@ namespace EfEagerLoad.ConsoleTester
 
         public static async Task Main(string[] args)
         {
-            //var value = Perf();
+            var value = Perf();
 
-            //if (value == null)
-            //{
-            //    Console.WriteLine();
-            //}
-            
+            if (value == null)
+            {
+                Console.WriteLine();
+            }
 
-            Func<Task> runFunc = Run;
-            await runFunc.RunInConsole();
+
+            //Func<Task> runFunc = Run;
+            //await runFunc.RunInConsole();
         }
+
+        private static readonly IQueryable<Book> BookQuery = new Book[0].AsQueryable();
 
         public static object Perf()
         {
-            //var bookQuery = new Book[0].AsQueryable();
-            //return bookQuery.AsQueryable().EagerLoad(_testDbContext, IncludeExecution.NoCache).ToArray();
+            EagerLoadContext.SkipEntityFrameworkCheckForTesting = true;
+            EagerLoadContext.SkipQueryIncludeForTesting = true;
 
-
-            var item = new object();
-            var bookQuery = new Book[0].AsQueryable();
-            Enumerable.Range(0, 1000000).ForEach(_ =>
+            var item = BookQuery.EagerLoad(_testDbContext, IncludeExecution.NoCache);
+            Enumerable.Range(0, 10).ForEach(_ =>
             {
-                item = bookQuery.EagerLoad(_testDbContext, IncludeExecution.Cached).ToArray();
+                item = BookQuery.EagerLoad(_testDbContext, IncludeExecution.NoCache);
             });
+
+            Thread.Sleep(1000);
+            GC.Collect(0);
+            
+            for (var i = 0; i < 5; i++)
+            {
+                item = BookQuery.EagerLoad(_testDbContext, IncludeExecution.NoCache);
+            }
+
             return item;
         }
 

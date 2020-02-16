@@ -5,6 +5,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
 using EfEagerLoad.Benchmarks.Data;
 using EfEagerLoad.Benchmarks.Model;
+using EfEagerLoad.Common;
 using EfEagerLoad.Engine;
 using EfEagerLoad.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -70,6 +71,7 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
         [GlobalSetup]
         public void GlobalCleanup()
         {
+            EagerLoadContext.SkipEntityFrameworkCheckForTesting = true;
             _testDbContext = new TestDbContext(new DbContextOptionsBuilder<TestDbContext>()
                             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
         }

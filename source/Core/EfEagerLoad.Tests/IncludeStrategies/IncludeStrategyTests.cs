@@ -39,7 +39,7 @@ namespace EfEagerLoad.Tests.IncludeStrategies
         public void ExecuteBeforeInclude_WillLogTheIncludePaths_IfaLoggerCanBeObtained()
         {
             var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>(),
-                                                rooType: typeof(IncludeStrategyTests));
+                                                rootType: typeof(IncludeStrategyTests));
             PathsFound.ForEach(i => context.IncludePathsToInclude.Add(i));
             
             var strategyMock = new Mock<IncludeStrategy>();

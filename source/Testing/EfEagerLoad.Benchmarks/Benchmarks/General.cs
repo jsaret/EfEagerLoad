@@ -17,13 +17,22 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
     [MemoryDiagnoser]
     public class General
     {
+        private static readonly IQueryable<Book> BookQuery = new Book[0].AsQueryable();
+
         private TestDbContext _testDbContext;
+
+        [GlobalSetup]
+        public void GlobalCleanup()
+        {
+            EagerLoadContext.SkipEntityFrameworkCheckForTesting = true;
+            _testDbContext = new TestDbContext(new DbContextOptionsBuilder<TestDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        }
 
         [Benchmark(Baseline = true)]
         public IList<Book> HandCoded_Navigation()
         {
-            var bookQuery = new Book[0].AsQueryable();
-            return bookQuery.Include(nameof(Book.Author))
+            return BookQuery.Include(nameof(Book.Author))
                 .Include($"{nameof(Book.Author)}.{ nameof(Author.Books)}")
                 .Include(nameof(Book.Category))
                 .Include(nameof(Book.Publisher)).ToArray();
@@ -32,8 +41,7 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
         [Benchmark]
         public IList<Book> HandCoded_Expressions()
         {
-            var bookQuery = new Book[0].AsQueryable();
-            return bookQuery.Include(book => book.Author).ThenInclude(author => author.Books)
+            return BookQuery.Include(book => book.Author).ThenInclude(author => author.Books)
                 .Include(book => book.Category)
                 .Include(book => book.Publisher).ThenInclude(p => p.Books)
                 .ToArray();
@@ -49,31 +57,27 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
         [Benchmark]
         public IList<Book> EfEagerLoad_IgnoringIncludePaths()
         {
-            var bookQuery = new Book[0].AsQueryable();
-            return bookQuery.EagerLoad(_testDbContext, $"{nameof(Book.Author)}.{ nameof(Author.Books)}").ToArray();
+            return BookQuery.EagerLoad(_testDbContext, $"{nameof(Book.Author)}.{ nameof(Author.Books)}").ToArray();
         }
 
         [Benchmark]
         public IList<Book> EfEagerLoad_NotCached()
         {
-            var bookQuery = new Book[0].AsQueryable();
-            return bookQuery.EagerLoad(_testDbContext, IncludeExecution.NoCache).ToArray();
+            return BookQuery.EagerLoad(_testDbContext, IncludeExecution.NoCache).ToArray();
+        }
+
+        [Benchmark]
+        public IList<Book> EfEagerLoad_NotCached_IgnoringIncludePaths()
+        {
+            return BookQuery.EagerLoad(_testDbContext, IncludeExecution.NoCache, 
+                $"{nameof(Book.Author)}.{ nameof(Author.Books)}").ToArray();
         }
 
         [Benchmark]
         public IList<Book> EfEagerLoad_Cached()
         {
-            var bookQuery = new Book[0].AsQueryable();
-            return bookQuery.EagerLoad(_testDbContext, true).ToArray();
+            return BookQuery.EagerLoad(_testDbContext, true).ToArray();
         }
-
-
-        [GlobalSetup]
-        public void GlobalCleanup()
-        {
-            EagerLoadContext.SkipEntityFrameworkCheckForTesting = true;
-            _testDbContext = new TestDbContext(new DbContextOptionsBuilder<TestDbContext>()
-                            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
-        }
+        
     }
 }

@@ -17,12 +17,12 @@ namespace EfEagerLoad.Common
         private readonly Stack<INavigation> _navigationPath = new Stack<INavigation>();
 
         public EagerLoadContext(DbContext dbContext, IIncludeStrategy includeStrategy, IList<string> includePathsToIgnore = null,
-                                IncludeExecution includeExecution = IncludeExecution.Cached, Type rooType = null)
+                                IncludeExecution includeExecution = IncludeExecution.Cached, Type rootType = null)
         {
             Guard.IsNotNull(nameof(dbContext), dbContext);
             Guard.IsNotNull(nameof(includeStrategy), includeStrategy);
 
-            RootType = rooType;
+            RootType = rootType;
             DbContext = dbContext;
             IncludePathsToIgnore =  new List<string>(includePathsToIgnore ?? new string[0]);
             IncludeStrategy = includeStrategy;

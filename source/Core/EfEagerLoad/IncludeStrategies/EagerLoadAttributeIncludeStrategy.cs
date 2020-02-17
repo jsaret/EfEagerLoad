@@ -66,7 +66,7 @@ namespace EfEagerLoad.IncludeStrategies
             }
 
             // NotIfParentsParentType
-            if (context.NavigationPath.Count > 2)
+            if (context.NavigationPath.Count > 2 && attribute.NotIfParentsParentType)
             {
                 var parentsParentNavigation = context.NavigationPath.ElementAtOrDefault(2);
                 if(_navigationHelper.GetTypeForNavigation(parentsParentNavigation) == currentNavigationType) { return false; }
@@ -74,7 +74,7 @@ namespace EfEagerLoad.IncludeStrategies
 
 
             // MaxRootTypeCount && MaxTypeCount 
-            if (DoesNavigationGoOverTheMaxTypeLimits(context, attribute, currentNavigationType)) { return false; }
+            //if (DoesNavigationGoOverTheMaxTypeLimits(context, attribute, currentNavigationType)) { return false; }
 
             return true;
         }

@@ -73,8 +73,8 @@ namespace EfEagerLoad.IncludeStrategies
             }
 
 
-            // MaxRootTypeCount && MaxTypeCount 
-            //if (DoesNavigationGoOverTheMaxTypeLimits(context, attribute, currentNavigationType)) { return false; }
+            // MaxRootTypeCount && MaxTypeCount
+            if (DoesNavigationGoOverTheMaxTypeLimits(context, attribute, currentNavigationType)) { return false; }
 
             return true;
         }

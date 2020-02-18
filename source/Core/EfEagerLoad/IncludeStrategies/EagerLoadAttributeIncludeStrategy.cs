@@ -28,7 +28,7 @@ namespace EfEagerLoad.IncludeStrategies
         {
             if (context.CurrentNavigation?.PropertyInfo == null) { return false; }
 
-            // Find EagerLoad Attributes
+            // Find EagerLoad Attribute
             var attribute = GetAttributeForNavigation(context);
 
             // No EagerLoad Attribute
@@ -41,10 +41,10 @@ namespace EfEagerLoad.IncludeStrategies
             if (attribute.Never) { return false; }
 
             // NotOnRoot
-            if (context.NavigationPath.Count == 1 && attribute.NotOnRoot) { return false; }
+            if (attribute.NotOnRoot && context.NavigationPath.Count == 1) { return false; }
 
             // OnlyOnRoot
-            if (context.NavigationPath.Count > 1 && attribute.OnlyOnRoot) { return false; }
+            if (attribute.OnlyOnRoot && context.NavigationPath.Count > 1) { return false; }
 
             // MaxDepthPosition
             if (attribute.MaxDepthPosition < context.NavigationPath.Count) { return false; }
@@ -53,25 +53,23 @@ namespace EfEagerLoad.IncludeStrategies
             var currentNavigationType = _navigationHelper.GetTypeForNavigation(context.CurrentNavigation);
 
             // NotIfRootType
-            if (currentNavigationType == context.RootType && attribute.NotIfRootType) { return false; }
+            if (attribute.NotIfRootType && currentNavigationType == context.RootType) { return false; }
 
             // Get Root Navigation
-            var rootNavigation = context.NavigationPath.ElementAtOrDefault(context.NavigationPath.Count -1);
+            var rootNavigation = context.NavigationPath.LastOrDefault();
 
             // MaxDepth - needs to be off the Root Navigation
             if (rootNavigation != null)
             {
-                EagerLoadAttributeCache.TryGetValue(rootNavigation, out var rootNavigationAttribute);
-                if (rootNavigationAttribute?.MaxDepth < context.NavigationPath.Count) { return false; }
+                if (EagerLoadAttributeCache[rootNavigation].MaxDepth < context.NavigationPath.Count) { return false; }
             }
 
             // NotIfParentsParentType
-            if (context.NavigationPath.Count > 2 && attribute.NotIfParentsParentType)
+            if (attribute.NotIfParentsParentType && context.NavigationPath.Count > 2)
             {
                 var parentsParentNavigation = context.NavigationPath.ElementAtOrDefault(2);
                 if(_navigationHelper.GetTypeForNavigation(parentsParentNavigation) == currentNavigationType) { return false; }
             }
-
 
             // MaxRootTypeCount && MaxTypeCount
             if (DoesNavigationGoOverTheMaxTypeLimits(context, attribute, currentNavigationType)) { return false; }

@@ -15,13 +15,25 @@ namespace EfEagerLoad.IncludeStrategies
 
         public virtual void FilterIncludePathsBeforeInclude(EagerLoadContext context)
         {
-            foreach (var navigationPath in context.IncludePathsToInclude.ToArray())
+            //var 
+            foreach (var pathToExclude in context.IncludePathsToIgnore)
             {
-                if (context.IncludePathsToIgnore.Any(nav => navigationPath.StartsWith(nav)))
+                for (var i = context.IncludePathsToInclude.Count - 1; i >= 0; i--)
                 {
-                    context.IncludePathsToInclude.Remove(navigationPath);
+                    if (context.IncludePathsToInclude[i].StartsWith(pathToExclude, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        context.IncludePathsToInclude.Remove(context.IncludePathsToInclude[i]);
+                    }
                 }
             }
+
+            //foreach (var navigationPath in context.IncludePathsToInclude.ToArray())
+            //{
+            //    if (context.IncludePathsToIgnore.Any(nav => navigationPath.StartsWith(nav)))
+            //    {
+            //        context.IncludePathsToInclude.Remove(navigationPath);
+            //    }
+            //}
         }
 
         public virtual void ExecuteBeforeInclude(EagerLoadContext context)

@@ -226,22 +226,111 @@ namespace EfEagerLoad.Tests.IncludeStrategies
         }
 
         [Fact]
+        public void ShouldNotEagerLoad_WhenMatchesTheParentsParentType()
+        {
+            var attribute = new EagerLoadAttribute(notIfParentsParentType: true);
+
+            var navigationHelperMock = new Mock<NavigationHelper>();
+
+            var strategy = new EagerLoadAttributeIncludeStrategy(navigationHelperMock.Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), strategy, rootType: typeof(Publisher));
+
+            var firstNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(firstNavigationMock.Object, attribute);
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Book));
+
+            context.SetCurrentNavigation(firstNavigationMock.Object);
+            Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
+
+            var secondNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(secondNavigationMock.Object, attribute);
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Author));
+
+            context.SetCurrentNavigation(secondNavigationMock.Object);
+            Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
+
+            var thirdNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(thirdNavigationMock.Object, attribute);
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Book));
+
+            context.SetCurrentNavigation(thirdNavigationMock.Object);
+            Assert.False(strategy.ShouldIncludeCurrentNavigation(context));
+        }
+
+        [Fact]
         public void ShouldNotEagerLoad_WhenOverTheRootTypeCount()
         {
             var attribute = new EagerLoadAttribute(maxRootTypeCount: 1);
 
             var navigationHelperMock = new Mock<NavigationHelper>();
-            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
-                .Returns(typeof(Book));
 
             var strategy = new EagerLoadAttributeIncludeStrategy(navigationHelperMock.Object);
             var context = new EagerLoadContext(Mock.Of<DbContext>(), strategy, rootType: typeof(Book));
 
             var firstNavigationMock = SetupGenericNavigationMock();
             EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(firstNavigationMock.Object, attribute);
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Book));
 
             context.SetCurrentNavigation(firstNavigationMock.Object);
             Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
+
+            var secondNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(secondNavigationMock.Object, 
+                new EagerLoadAttribute());
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Author));
+
+            context.SetCurrentNavigation(secondNavigationMock.Object);
+            Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
+
+            var thirdNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(thirdNavigationMock.Object, attribute);
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Book));
+
+            context.SetCurrentNavigation(thirdNavigationMock.Object);
+            Assert.False(strategy.ShouldIncludeCurrentNavigation(context));
+        }
+
+
+        [Fact]
+        public void ShouldNotEagerLoad_WhenOverTheTypeCount()
+        {
+            var attribute = new EagerLoadAttribute(maxTypeCount: 1);
+
+            var navigationHelperMock = new Mock<NavigationHelper>();
+
+            var strategy = new EagerLoadAttributeIncludeStrategy(navigationHelperMock.Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), strategy, rootType: typeof(Publisher));
+
+            var firstNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(firstNavigationMock.Object, attribute);
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Book));
+
+            context.SetCurrentNavigation(firstNavigationMock.Object);
+            Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
+
+            var secondNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(secondNavigationMock.Object,
+                new EagerLoadAttribute());
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Author));
+
+            context.SetCurrentNavigation(secondNavigationMock.Object);
+            Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
+
+            var thirdNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(thirdNavigationMock.Object, attribute);
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Book));
+
+            context.SetCurrentNavigation(thirdNavigationMock.Object);
+            Assert.False(strategy.ShouldIncludeCurrentNavigation(context));
         }
 
 

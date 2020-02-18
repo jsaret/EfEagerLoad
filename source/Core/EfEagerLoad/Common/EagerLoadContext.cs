@@ -71,10 +71,11 @@ namespace EfEagerLoad.Common
         {
             if (_navigationPath.Count == 0) { return; }
 
+            var currentNavigation = CurrentNavigation;
             _navigationPath.Pop();
             CurrentIncludePath = (_navigationPath.Count > 1) ?
-                                    CurrentIncludePath.AsSpan().GetParentIncludePathSpan().ToString() :
-                                    CurrentNavigation?.Name ?? string.Empty;
+                CurrentIncludePath.Substring(0, CurrentIncludePath.Length - currentNavigation.Name.Length - 1) :
+                CurrentNavigation?.Name ?? string.Empty;
         }
 
         public static void InitializeServiceProvider(IServiceProvider serviceProvider)

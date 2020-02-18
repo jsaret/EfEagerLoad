@@ -14,7 +14,7 @@ namespace EfEagerLoad.ConsoleTester.Model
 
         public string Name { get; set; }
 
-        [EagerLoad]
+        [EagerLoad(maxTypeCount: 2)]
         public virtual IList<Book> Books { get; set; } = new List<Book>();
     }
 }

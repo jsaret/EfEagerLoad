@@ -21,6 +21,20 @@ namespace EfEagerLoad.Tests.Common
         }
 
         [Fact]
+        public void ShouldDoNothing_WhenNavigationAddedIsNull()
+        {
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());
+
+            Assert.Equal(string.Empty, context.CurrentIncludePath);
+            Assert.Null(context.CurrentNavigation);
+
+            context.SetCurrentNavigation(null);
+
+            Assert.Equal(string.Empty, context.CurrentIncludePath);
+            Assert.Null(context.CurrentNavigation);
+        }
+
+        [Fact]
         public void ShouldDisplayCorrect_CurrentIncludePath_WhenAddingFirstNavigation()
         {
             var context = new EagerLoadContext(Mock.Of<DbContext>(), Mock.Of<IIncludeStrategy>());

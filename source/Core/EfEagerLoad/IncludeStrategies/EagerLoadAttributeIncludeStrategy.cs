@@ -64,6 +64,12 @@ namespace EfEagerLoad.IncludeStrategies
                 if (EagerLoadAttributeCache[rootNavigation].MaxDepth < context.NavigationPath.Count) { return false; }
             }
 
+            // NotIfRootNavigationType
+            if (attribute.NotIfRootNavigationType && context.NavigationPath.Count > 0)
+            {
+                if (_navigationHelper.GetTypeForNavigation(rootNavigation) == currentNavigationType) { return false; }
+            }
+
             // NotIfParentsParentType
             if (attribute.NotIfParentsParentType && context.NavigationPath.Count > 2)
             {

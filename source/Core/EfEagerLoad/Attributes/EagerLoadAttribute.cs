@@ -20,6 +20,7 @@ namespace EfEagerLoad.Attributes
         /// </param>
         /// <param name="notIfRootType">If set to <c>true</c> will not Eager Load this Property if it's the same type as the Root Entity being loaded.
         /// </param>
+        /// <param name="notIfRootNavigationType">>If set to <c>true</c> will not Eager Load this Property if it's the same type as the Root Navigation (Property) being loaded.</param>
         /// <param name="maxDepth">
         /// The maximum depth allowed for this this Property's Navigation Path. This will only be applied for a Root Navigation.
         /// </param>
@@ -28,6 +29,7 @@ namespace EfEagerLoad.Attributes
         /// <param name="maxTypeCount">The maximum count for the type being loaded. This includes the Root Entity's Type.</param>
         public EagerLoadAttribute(bool always = false, bool never = false, bool onlyOnRoot = false, bool notOnRoot = false, 
                                     bool notIfParentsParentType = false, bool notIfRootType = false,
+                                    bool notIfRootNavigationType = false,
                                     int maxDepth = DefaultMaxDepth, int maxDepthPosition = DefaultMaxDepthPosition,
                                     int maxRootTypeCount = DefaultMaxRootTypeCount, int maxTypeCount = DefaultMaxTypeCount)
         {
@@ -37,6 +39,7 @@ namespace EfEagerLoad.Attributes
             NotOnRoot = notOnRoot;
             NotIfParentsParentType = notIfParentsParentType;
             NotIfRootType = notIfRootType;
+            NotIfRootNavigationType = notIfRootNavigationType;
             MaxDepth = maxDepth;
             MaxDepthPosition = maxDepthPosition;
             MaxRootTypeCount = maxRootTypeCount;
@@ -55,6 +58,8 @@ namespace EfEagerLoad.Attributes
         public bool NotIfParentsParentType { get; }
 
         public bool NotIfRootType { get; }
+
+        public bool NotIfRootNavigationType { get; }
 
         public int MaxDepth { get; }
 

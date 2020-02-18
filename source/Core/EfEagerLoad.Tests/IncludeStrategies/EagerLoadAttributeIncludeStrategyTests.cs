@@ -144,8 +144,6 @@ namespace EfEagerLoad.Tests.IncludeStrategies
             Assert.False(strategy.ShouldIncludeCurrentNavigation(context));
         }
 
-        
-
         [Fact]
         public void ShouldNotEagerLoad_WhenOverTheNavigationsMaxDepthPosition()
         {
@@ -163,6 +161,30 @@ namespace EfEagerLoad.Tests.IncludeStrategies
 
             context.SetCurrentNavigation(firstNavigationMock.Object);
             Assert.True(strategy.ShouldIncludeCurrentNavigation(context));
+
+            var secondNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(secondNavigationMock.Object, attribute);
+
+            context.SetCurrentNavigation(secondNavigationMock.Object);
+            Assert.False(strategy.ShouldIncludeCurrentNavigation(context));
+        }
+
+        [Fact]
+        public void ShouldNotEagerLoad_WhenNavigationTypeIsTheRootNavigationType()
+        {
+            var attribute = new EagerLoadAttribute(notIfRootNavigationType: true);
+
+            var navigationHelperMock = new Mock<NavigationHelper>();
+            navigationHelperMock.Setup(helper => helper.GetTypeForNavigation(It.IsAny<INavigation>()))
+                .Returns(typeof(Book));
+
+            var strategy = new EagerLoadAttributeIncludeStrategy(navigationHelperMock.Object);
+            var context = new EagerLoadContext(Mock.Of<DbContext>(), strategy, rootType: typeof(Book));
+
+            var firstNavigationMock = SetupGenericNavigationMock();
+            EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(firstNavigationMock.Object, attribute);
+
+            context.SetCurrentNavigation(firstNavigationMock.Object);
 
             var secondNavigationMock = SetupGenericNavigationMock();
             EagerLoadAttributeIncludeStrategy.EagerLoadAttributeCache.TryAdd(secondNavigationMock.Object, attribute);

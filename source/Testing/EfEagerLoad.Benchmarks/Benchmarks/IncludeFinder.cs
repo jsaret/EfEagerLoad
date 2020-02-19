@@ -30,12 +30,12 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
             return _includeFinder.BuildIncludePathsForRootType(_context);
         }
 
-        [Benchmark]
-        public IList<string> Iterate()
-        {
-            _context.IncludePathsToInclude.Clear();
-            return _includeFinder.BuildIncludePathsForRootType2(_context);
-        }
+        //[Benchmark]
+        //public IList<string> Iterate()
+        //{
+        //    _context.IncludePathsToInclude.Clear();
+        //    return _includeFinder.BuildIncludePathsForRootType2(_context);
+        //}
 
         [GlobalSetup]
         public void GlobalSetup()

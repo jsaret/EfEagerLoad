@@ -91,7 +91,7 @@ namespace EfEagerLoad.IncludeStrategies
                 return false;
             }
             
-            var rootCount = 0;
+            var rootCount = 1;
             var typeCount = 0;
             foreach (var nav in context.NavigationPath)
             {

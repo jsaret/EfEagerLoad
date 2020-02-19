@@ -24,16 +24,16 @@ namespace EfEagerLoad.ConsoleTester
 
         public static async Task Main(string[] args)
         {
-            //var value = Perf();
+            var value = Perf();
 
-            //if (value == null)
-            //{
-            //    Console.WriteLine();
-            //}
+            if (value == null)
+            {
+                Console.WriteLine();
+            }
 
 
-            Func<Task> runFunc = Run;
-            await runFunc.RunInConsole();
+            //Func<Task> runFunc = Run;
+            //await runFunc.RunInConsole();
         }
 
         private static readonly IQueryable<Book> BookQuery = new Book[0].AsQueryable();

@@ -13,7 +13,13 @@ namespace EfEagerLoad.Engine
 
         internal INavigation[] GetNavigationsForType(EagerLoadContext context, Type type)
         {
-            return CachedTypeNavigations.GetOrAdd(type, typeToFind => context.DbContext.Model.FindEntityType(typeToFind).GetNavigations().ToArray());
+            return CachedTypeNavigations.GetOrAdd(type, GetNavigationsForType);
+
+
+            INavigation[] GetNavigationsForType(Type typeToFind)
+            {
+                return context.DbContext.Model.FindEntityType(typeToFind).GetNavigations().ToArray();
+            }
         }
     }
 }

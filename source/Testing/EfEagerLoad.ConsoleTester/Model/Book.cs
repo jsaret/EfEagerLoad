@@ -20,6 +20,7 @@ namespace EfEagerLoad.ConsoleTester.Model
         public virtual Category Category { get; set; }
 
         [EagerLoad]
+        //[EagerLoad(maxRootTypeCount: 2, maxTypeCount:2)]
         public virtual Author Author { get; set; }
     }
 }

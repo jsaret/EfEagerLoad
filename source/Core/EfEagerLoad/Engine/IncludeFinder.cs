@@ -20,7 +20,7 @@ namespace EfEagerLoad.Engine
 
         internal virtual IList<string> BuildIncludePathsForRootType(EagerLoadContext context)
         {
-            BuildIncludesForEagerLoadContext2(context);
+            BuildIncludesForEagerLoadContext(context);
             return context.IncludePathsToInclude;
         }
 

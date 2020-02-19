@@ -16,18 +16,25 @@ namespace EfEagerLoad.Benchmarks.Benchmarks
     [MemoryDiagnoser]
     public class IncludeFinder
     {
-        private const int OperationsPerInvoke = 100;
+        //private const int OperationsPerInvoke = 100;
 
         private TestDbContext _testDbContext;
         private EagerLoadContext _context;
         private EagerLoadAttributeIncludeStrategy _strategy;
         private Engine.IncludeFinder _includeFinder;
 
-        [Benchmark(Baseline = true, OperationsPerInvoke = OperationsPerInvoke)]
+        [Benchmark(Baseline = true)]
         public IList<string> Recurse_Baseline()
         {
             _context.IncludePathsToInclude.Clear();
             return _includeFinder.BuildIncludePathsForRootType(_context);
+        }
+
+        [Benchmark]
+        public IList<string> Iterate()
+        {
+            _context.IncludePathsToInclude.Clear();
+            return _includeFinder.BuildIncludePathsForRootType2(_context);
         }
 
         [GlobalSetup]

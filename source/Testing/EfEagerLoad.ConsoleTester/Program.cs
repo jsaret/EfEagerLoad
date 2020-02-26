@@ -10,7 +10,6 @@ using EfEagerLoad.ConsoleTester.Model;
 using EfEagerLoad.Engine;
 using EfEagerLoad.Extensions;
 using EfEagerLoad.IncludeStrategies;
-using JetBrains.Profiler.Api;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -53,16 +52,10 @@ namespace EfEagerLoad.ConsoleTester
             GC.Collect(0);
             Thread.Sleep(1);
 
-            MemoryProfiler.CollectAllocations(true);
-
-            MemoryProfiler.GetSnapshot();
             for (var i = 0; i < 5; i++)
             {
                 item = BookQuery.EagerLoad(_testDbContext, IncludeExecution.NoCache);
-                MemoryProfiler.GetSnapshot();
             }
-
-            MemoryProfiler.CollectAllocations(false);
 
             return item;
         }

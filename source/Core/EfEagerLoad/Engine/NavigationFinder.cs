@@ -13,8 +13,8 @@ namespace EfEagerLoad.Engine
 
         internal INavigation[] GetNavigationsForType(EagerLoadContext context, Type type)
         {
-            return CachedTypeNavigations.GetOrAdd(type, GetNavigationsForType);
-
+            return CachedTypeNavigations.ContainsKey(type) ? CachedTypeNavigations[type] : 
+                CachedTypeNavigations.GetOrAdd(type, GetNavigationsForType);
 
             INavigation[] GetNavigationsForType(Type typeToFind)
             {

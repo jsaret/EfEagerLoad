@@ -106,7 +106,7 @@ The following extension methods are currently offered:
 > 
 > **EagerLoadMatching**
 >
-> Eager load either using a custom user defined IIncludeStrategy or using predicate functions
+> Eager load either using a custom user defined IncludeStrategy or using predicate functions
 > 
 
 These extension methods also offer various extra optional parameters one can use to control how the EfEagerLoad library will execute (such as caching and the ability to further filter which IncludePaths will be considered).
